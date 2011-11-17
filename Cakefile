@@ -13,11 +13,12 @@ task 'compile', 'compile coffeescript to javascript', (options) ->
 task 'runserver', 'run the node server', (options) ->
   invoke 'clean'
   compile_files ->
-    server = spawn 'node', ['lib/server.js']
+    pkg_config = JSON.parse fs.readFileSync 'package.json'
+    server = spawn 'node', [ pkg_config['main'] ]
     server.stdout.on 'data', (data) ->
-      console.log data.toString()
+      console.log strip data.toString()
     server.stderr.on 'data', (data) ->
-      console.error data.toString()
+      console.error strip data.toString()
     server.on 'exit', (code, signal) ->
       process.exit code
 
@@ -36,3 +37,6 @@ compile_files = (cb) ->
       console.log 'stderr', stde
       process.exit 1
     cb() if cb
+
+strip = (s) ->
+  return s.replace(/^\s*/, '').replace(/\s*$/, '')
