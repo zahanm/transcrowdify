@@ -1,7 +1,16 @@
 
+path = require 'path'
 express = require 'express'
 
 server = express.createServer()
+
+server.configure ->
+  server.use express.logger 'tiny'
+  server.use server.router
+  server.use express.static path.normalize path.join __dirname, '../static'
+
+server.configure 'development', ->
+  server.use express.errorHandler dumpExceptions: true, showStack: true
 
 server.get '/', (req, res) ->
   res.writeHead 200, 'Content-Type': 'text/plain'

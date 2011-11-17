@@ -33,8 +33,8 @@ task 'clean', 'clean up assembled and built js', (options) ->
 compile_files = (cb) ->
   exec "coffee --compile --lint --output #{jslib} #{coffeelib}", (err, stdo, stde) ->
     if (err)
-      console.log 'coffeescript compilation error', err
-      console.log 'stderr', stde
+      console.error 'coffeescript compilation error', err.type
+      console.error 'stderr', stde
       process.exit 1
     cb() if cb
 
