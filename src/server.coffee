@@ -6,6 +6,8 @@ utils = require './utils'
 
 server = express.createServer()
 
+# -- server middleware
+
 server.configure ->
   server.use express.logger 'tiny'
   server.use server.router
@@ -14,9 +16,14 @@ server.configure ->
 server.configure 'development', ->
   server.use express.errorHandler dumpExceptions: true, showStack: true
 
+# -- view controllers
+
+server.set 'view options', layout: false
+
 server.get '/', (req, res) ->
-  res.writeHead 200, 'Content-Type': 'text/plain'
-  res.end 'Hello world\n'
+  res.render 'index.jade'
+
+# -- final server setup
 
 server.listen 1337, '127.0.0.1'
 

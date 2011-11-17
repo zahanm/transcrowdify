@@ -12,7 +12,8 @@
     "node": "~0.4.12"
   },
   "dependencies": {
-    "express": "*"
+    "express": "*",
+    "jade": "*"
   },
   "devDependencies": {
     "coffee-script": "*"
