@@ -1,5 +1,5 @@
 
-## Privacy Preserving Journal Transcription
+## Privacy Preserving Transcription
 
 This is where it's at.
 

@@ -1,0 +1,18 @@
+{
+  "author": "Zahan Malkani <zahanm@gmail.com> (http://zahanm.com)",
+  "name": "transcrowdify",
+  "description": "Privacy preserving transcription",
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/zahanm/transcrowdify.git"
+  },
+  "main": "lib/server.js",
+  "engines": {
+    "node": "~0.4.12"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "coffee-script": "*"
+   }
+}
