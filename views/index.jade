@@ -16,3 +16,13 @@ html(lang="en")
           li Siderbar item 2
       div#main.column.grid_9
         p Hi there!
+        hr
+        form(action="/upload")
+          p
+            label(for="upload[title]") Title
+            input(type="text", placeholder="Journal title", id="upload[title]", name="upload[title]")
+          p
+            label(for="upload[file]") Journal PDF
+              input(type="file", id="upload[file]", name="upload[file]")
+          p
+            input(type="submit")
