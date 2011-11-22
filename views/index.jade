@@ -18,7 +18,7 @@ html(lang="en")
       div#main.column.grid_9
         p Hi there!
         hr
-        form(action="/upload", method="post")
+        form(action="/upload", enctype="multipart/form-data", method="post")
           p
             label(for="upload[title]") Title
             input(type="text", placeholder="Journal title", id="upload[title]", name="upload[title]")
