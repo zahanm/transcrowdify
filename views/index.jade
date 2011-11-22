@@ -3,6 +3,7 @@ html(lang="en")
   head
     title Privacy Preserving Transcription
     link(rel="stylesheet/less", type="text/css", href="styles/base.less")
+    link(rel="stylesheet/less", type="text/css", href="styles/index.less")
     block scripts
       script(type="text/javascript", src="/js/less.min.js")
 
@@ -23,6 +24,6 @@ html(lang="en")
             input(type="text", placeholder="Journal title", id="upload[title]", name="upload[title]")
           p
             label(for="upload[file]") Journal PDF
-              input(type="file", id="upload[file]", name="upload[file]")
+            input(type="file", id="upload[file]", name="upload[file]")
           p
             input(type="submit")

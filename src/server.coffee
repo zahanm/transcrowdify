@@ -18,10 +18,8 @@ server.configure 'development', ->
 
 # -- view controllers
 
-server.set 'view options', layout: false
-
-server.get '/', (req, res) ->
-  res.render 'index.jade'
+controllers = require './controllers'
+controllers.configure server
 
 # -- final server setup
 
