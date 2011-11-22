@@ -1,7 +1,7 @@
 
 path = require 'path'
 express = require 'express'
-# XXX connect_form = require 'connect-form'
+connect_form = require 'connect-form'
 
 utils = require './utils'
 
@@ -11,7 +11,7 @@ server = express.createServer()
 
 server.configure ->
   server.use express.logger 'tiny'
-# XXX  server.use connect_form.form keepExtensions: true, uploadDir: utils.normedPathJoin __dirname, '../uploads'
+  server.use connect_form keepExtensions: true, uploadDir: utils.normedPathJoin __dirname, '../uploads'
   server.use server.router
   server.use express.static utils.normedPathJoin __dirname, '../static'
 

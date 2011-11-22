@@ -13,7 +13,8 @@
   },
   "dependencies": {
     "express": "*",
-    "jade": "*"
+    "jade": "*",
+    "connect-form": "*"
   },
   "devDependencies": {
     "coffee-script": "*"
