@@ -8,10 +8,9 @@ exports.configure = (server) ->
 
   server.post '/upload', (req, res) ->
     if req.form
-      req.form.oncomplete = (err, fields, files) ->
+      req.form.complete (err, fields, files) ->
         title = fields['upload[title]']
-        console.log files
-        journal = files[0]
+        journal = files['upload[file']
       res.render 'status.jade', errors: []
     else
       res.render 'status.jade', errors: [ 'Upload malfunction' ]
