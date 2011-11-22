@@ -12,9 +12,9 @@ exports.configure = (server) ->
         title = fields['upload[title]']
         console.log files
         journal = files[0]
-      res.render 'status.jade'
+      res.render 'status.jade', errors: []
     else
-      res.render 'status.jade', error: 'Upload malfunction'
+      res.render 'status.jade', errors: [ 'Upload malfunction' ]
 
   server.get '/status', (req, res) ->
-    res.render 'status.jade'
+    res.render 'status.jade', errors: []

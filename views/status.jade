@@ -15,4 +15,8 @@ html(lang="en")
           li Sidebar
           li Siderbar item 2
       div#main.column.grid_9
+        if errors.length
+          ul.error
+            each error in errors
+              li #{error}
         p This is where we will show you how many segments are done and what is left, maybe?
