@@ -4,10 +4,9 @@ from __future__ import print_function
 import sys
 import json
 import itertools
-import os.path
+import os.path as path
 from tempfile import NamedTemporaryFile
 from subprocess import Popen, PIPE
-from shutil import move
 
 import Image
 
@@ -27,12 +26,27 @@ try:
 except ImportError:
   from StringIO import StringIO
 
-OVERLAY_PDF_FNAME = 'output/overlay.pdf'
+'''
+Joins png's together to make one multi-page pdf
+dependencies: pyPdf, reportlab, Python Image Lib
+
+expects input on stdin:
+[
+  {
+    page: 0,
+    location: 'adsf/sda.png',
+    transcription: 'Writing in now',
+    type: 'text'
+  },
+  ...
+]
+'''
+
 PARA_PADDING = 25
 
 def paint_original_segments(fnames, transcriptions, page):
-  pdf_fname = 'tmp/search_{0}.pdf'.format(page)
-  pdf = Canvas(pdf_fname, pagesize=A4)
+  page_file = NamedTemporaryFile(suffix='.pdf', dir=path.abspath('./tmp/'), delete=False)
+  pdf = Canvas(page_file.name, pagesize=A4)
   top = A4[1]
   for fname, transcription in itertools.izip(fnames, transcriptions):
     segment = Image.open(fname)
@@ -43,7 +57,8 @@ def paint_original_segments(fnames, transcriptions, page):
     pdf.drawImage(fname, 0, top - height)
     top -= height
   pdf.save()
-  return pdf_fname
+  page_file.close()
+  return page_file.name
 
 LATEX_WRAP = """
 \\documentclass{{article}}
@@ -68,13 +83,13 @@ LATEX_NEWPAGE_SNIPPET = """
 
 LATEX_FONT_SIZE = 'large'
 
-LATEX_TMP_FNAME = 'builder.{format}'
-LATEX_PDF_FNAME = 'output/transcribed.pdf'
+LATEX_BUILD_FNAME = 'builder.{format}'
 
 def latex_to_pdf(raw_latex):
-  with open(os.path.join('tmp', LATEX_TMP_FNAME.format(format='tex')), 'w') as latex_file:
+  with open(path.join('tmp', LATEX_BUILD_FNAME.format(format='tex')), 'w') as latex_file:
     latex_file.write(raw_latex)
-  pdfcreator = ['pdflatex', '-interaction', 'nonstopmode', '-output-directory', 'tmp', LATEX_TMP_FNAME.format(format='tex')]
+  pdfcreator = ['pdflatex', '-interaction', 'nonstopmode', '-output-directory', 'tmp', LATEX_BUILD_FNAME.format(format='tex')]
+  print(pdfcreator)
   child = Popen(pdfcreator, stdout=PIPE)
   retcode = child.wait()
   if retcode != 0:
@@ -82,9 +97,13 @@ def latex_to_pdf(raw_latex):
     sys.stderr.write(raw_latex + '\n')
     sys.stderr.write(stdoutdata + '\n')
     raise RuntimeError('Error while creating math image with pdflatex')
-    return LATEX_TMP_FNAME.format(format='tex')
-  move(os.path.join('tmp', LATEX_TMP_FNAME.format(format='pdf')), LATEX_PDF_FNAME)
-  return LATEX_PDF_FNAME
+    return LATEX_BUILD_FNAME.format(format='tex')
+  latex_pdf = NamedTemporaryFile(prefix='transcribed_', suffix='.pdf', dir=path.abspath('./static/images/'), delete=False)
+  with open(path.join('tmp', LATEX_BUILD_FNAME.format(format='pdf')), 'rb') as pdf_contents:
+    latex_pdf.write(pdf_contents.read())
+  latex_pdf.close()
+  os.unlink(path.join('tmp', LATEX_BUILD_FNAME.format(format='pdf')))
+  return latex_pdf.name
 
 def assemble_latex(fnames, transcriptions, types):
   buf = StringIO()
@@ -95,39 +114,40 @@ def assemble_latex(fnames, transcriptions, types):
     else:
       # t_type= 'text'
       buf.write(stripped.replace('_', '\_').replace('^', '\^'))
+    buf.write('\n')
   return buf.getvalue()
 
 def join_pages(composites):
   latex_buf = StringIO()
-  pdf_fnames = []
+  page_fnames = []
   for page_num, collection in enumerate(collect_pages(composites)):
     fnames, transcriptions, types = [], [], []
     for r in collection:
       fnames.append(r['location'])
       transcriptions.append(r['transcription'])
       types.append(r['type'])
-    pdf_fnames.append(paint_original_segments(fnames, transcriptions, page_num))
+    page_fnames.append(paint_original_segments(fnames, transcriptions, page_num))
     latex_buf.write(assemble_latex(fnames, transcriptions, types))
     latex_buf.write(LATEX_NEWPAGE_SNIPPET)
   raw_latex = LATEX_WRAP.format(raw_latex=latex_buf.getvalue(), font_size=LATEX_FONT_SIZE)
   # transcribed pdf
-  latex_to_pdf(raw_latex)
+  latex_pdf_fname = latex_to_pdf(raw_latex)
   # ---
   # searchable pdf
   pdf_writer = PdfFileWriter()
   pdf_pages = []
-  for pdf_fname in pdf_fnames:
-    pdf_pages.append(open(pdf_fname, 'rb'))
+  for page_fname in page_fnames:
+    pdf_pages.append(open(page_fname, 'rb'))
     pdf_reader = PdfFileReader(pdf_pages[-1])
     pdf_writer.addPage(pdf_reader.getPage(0))
-  with open(OVERLAY_PDF_FNAME, 'wb') as pdf_searchable:
-    pdf_writer.write(pdf_searchable)
+  searchable_pdf = NamedTemporaryFile(prefix='searchable_', suffix='.pdf', dir=path.abspath('./static/images/'), delete=False)
+  pdf_writer.write(searchable_pdf)
+  searchable_pdf.close()
   map(lambda f: f.close(), pdf_pages)
-  return json.dumps({
-    'transcribed_pdf': LATEX_PDF_FNAME,
-    'overlay_pdf': OVERLAY_PDF_FNAME
-  })
-
+  json.dump({
+    'transcribed': latex_pdf_fname,
+    'searchable': searchable_pdf.name
+  }, sys.stdout)
 
 def collect_pages(composites):
   # first sort by page number
@@ -135,22 +155,20 @@ def collect_pages(composites):
   for page, collection in itertools.groupby(composites, key=lambda composite: composite['page']):
     yield collection
 
-def decode_dog_output(output_fname):
+def json_decode(json_output):
   output = None
-  with open(output_fname) as dog_output:
-    try:
-      output = json.load(dog_output)
-    except TypeError:
-      pass
+  try:
+    output = json.loads(json_output)
+  except TypeError:
+    pass
   if not output:
-    print("{}")
-    return None
+    return []
   return output
 
 if __name__ == '__main__':
-  if len(sys.argv) == 2:
-    composites = decode_dog_output(sys.argv[1])
+  if len(sys.argv) == 1:
+    composites = json_decode(sys.stdin.read())
     if composites:
-      print(join_pages(composites))
+      join_pages(composites)
   else:
     print('usage: python', __file__, '<output_from_dog>')

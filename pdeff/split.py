@@ -16,6 +16,9 @@ from pyPdf import PdfFileWriter, PdfFileReader
 '''
 Module to split pdf file into segments
 dependencies: imagemagick, pyPdf, Python Image Lib
+
+expect input on stdin:
+journal pdf file name
 '''
 
 SEGMENTS_PER_PAGE = 6
@@ -73,9 +76,8 @@ def cleanup_last_run():
     map(lambda f: os.unlink(f), glob(fg))
 
 if __name__ == '__main__':
-  # change this to use djange.FileField
-  if(len(sys.argv) == 2):
+  if len(sys.argv) == 1:
     cleanup_last_run()
-    split_pdf(sys.argv[1])
+    split_pdf(sys.stdin.read())
   else:
     print('usage: python', __file__, '<input_pdf>')
