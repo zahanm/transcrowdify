@@ -25,6 +25,7 @@ controllers.configure server
 
 # -- final server setup
 
-server.listen 1337, '127.0.0.1'
+port = 3779
+server.listen port
 
-console.log 'Server running at http://localhost:1337/'
+console.log "Server running at http://localhost:#{port}/"
