@@ -4,8 +4,14 @@ html(lang="en")
     title Privacy Preserving Transcription
     link(rel="stylesheet/less", type="text/css", href="styles/base.less")
     link(rel="stylesheet/less", type="text/css", href="styles/index.less")
-    block scripts
-      script(type="text/javascript", src="/js/less.min.js")
+    script(type="text/javascript", src="/js/less.min.js")
+    script(type="text/javascript", src="/js/dormouse.js")
+
+    :coffeescript
+      $dm.server 'http://arya.stanford.edu:3777'
+      $dm.api_key '6b044f121358683678e5e21de2202a5e0a0394d5'
+      $dm.getTasks (tasks) ->
+        console.log tasks
 
   body
     div#container.row
