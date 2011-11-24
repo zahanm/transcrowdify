@@ -27,10 +27,13 @@ exports.configure = (server) ->
 # -- helper functions
 
 segment = (fields, files) ->
+  uploaded = files['upload[file]']
+  if uploaded.type isnt 'application/pdf'
+    return fs.unlink uploaded.path
   # -- save Journal to db
   journal = new Journal
     title: fields['upload[title]']
-    file_path: files['upload[file]'].path
+    file_path: uploaded.path
   journal.save checker
   # -- divide into segments
   divide journal, (segments) ->
