@@ -12,7 +12,7 @@ Powered by [Dormouse](http://dormou.se).
   - reportlab
   - pil (Python Imaging Library)
 - brew or aptitude
-  - sqlite3
+  - mongodb
   - imagemagick
   - ghostscript
   - LaTeX
