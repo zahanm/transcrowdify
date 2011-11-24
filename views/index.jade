@@ -6,12 +6,25 @@ html(lang="en")
     link(rel="stylesheet/less", type="text/css", href="styles/index.less")
     script(type="text/javascript", src="/js/less.min.js")
     script(type="text/javascript", src="/js/dormouse.js")
+    script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js")
 
     :coffeescript
       $dm.server 'http://arya.stanford.edu:3777'
       $dm.api_key '6b044f121358683678e5e21de2202a5e0a0394d5'
-      $dm.getTasks (tasks) ->
-        console.log tasks
+      $dm.project_id = 20
+      $dm.template_id = 10
+      random_choice = (seq) ->
+        if seq instanceof Array
+          r = Math.floor( Math.random() * seq.length )
+          k = r
+        else
+          k = random_choice Object.keys seq
+        seq[k]
+      $(document).ready ->
+        $dm.getTasks (tasks) ->
+          tasks = tasks.filter (t) ->
+            t.task.project_id is $dm.project_id
+          console.log random_choice tasks
 
   body
     div#container.row
