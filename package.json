@@ -15,7 +15,8 @@
     "express": "*",
     "jade": "*",
     "connect-form": "*",
-    "mongoose": "*"
+    "mongoose": "*",
+    "dormouse": "0.0.1"
   },
   "devDependencies": {
     "coffee-script": "*"
