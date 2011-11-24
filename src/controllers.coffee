@@ -1,5 +1,10 @@
 
-{spawn, exec} = require 'child_process'
+{ spawn } = require 'child_process'
+mongoose = require 'mongoose'
+
+# -- models
+Journal = mongoose.model 'Journal'
+Segment = mongoose.model 'Segment'
 
 exports.configure = (server) ->
 
@@ -11,18 +16,32 @@ exports.configure = (server) ->
   server.post '/upload', (req, res) ->
     if req.form
       req.form.complete (err, fields, files) ->
-        title = fields['upload[title]']
-        journal = files['upload[file]']
-        # -- divide into segments
-        divide journal, (segments) ->
-          # -- save to db
-          console.log segments # DEBUG
+        segment fields, files
       res.render 'status.jade', errors: []
     else
       res.render 'status.jade', errors: [ 'Upload malfunction' ]
 
   server.get '/status', (req, res) ->
     res.render 'status.jade', errors: []
+
+# -- helper functions
+
+segment = (fields, files) ->
+  # -- save Journal to db
+  journal = new Journal
+    title: fields['upload[title]']
+    file_path: files['upload[file]'].path
+  journal.save checker
+  # -- divide into segments
+  divide journal, (segments) ->
+    # -- save Segments to db
+    segments.forEach (seg) ->
+      segment = new Segment
+        file_path: seg.location
+        page: seg.page
+        trans_type: seg.type
+        journal_id: journal._id
+      segment.save checker
 
 divide = (journal, cb) ->
   split = spawn 'python', [ 'pdeff/split.py' ]
@@ -32,11 +51,13 @@ divide = (journal, cb) ->
   split.stderr.on 'data', (buffer) ->
     console.error buffer.toString().trim()
   split.on 'exit', (code) ->
-    if code isnt 0
-      cb []
+    cb [] if code isnt 0
     try
       cb JSON.parse output
     catch err
       cb []
-  split.stdin.write journal.path
+  split.stdin.write journal.file_path
   split.stdin.end()
+
+checker = (err) ->
+  throw new Error 'Error saving model to db' if err

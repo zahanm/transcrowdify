@@ -14,7 +14,8 @@
   "dependencies": {
     "express": "*",
     "jade": "*",
-    "connect-form": "*"
+    "connect-form": "*",
+    "mongoose": "*"
   },
   "devDependencies": {
     "coffee-script": "*"

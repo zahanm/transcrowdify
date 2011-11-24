@@ -2,9 +2,14 @@
 path = require 'path'
 express = require 'express'
 connect_form = require 'connect-form'
+mongoose = require 'mongoose'
+
+mongoose.connect 'mongodb://localhost/transcrowdify'
 
 utils = require './utils'
+models = require './models'
 
+models.define()
 server = express.createServer()
 
 # -- server middleware
