@@ -4,6 +4,7 @@ from __future__ import print_function
 import sys
 import json
 import itertools
+import os
 import os.path as path
 from tempfile import NamedTemporaryFile
 from subprocess import Popen, PIPE
