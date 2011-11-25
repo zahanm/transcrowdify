@@ -21,10 +21,14 @@ html(lang="en")
           k = random_choice Object.keys seq
         seq[k]
       setup_task = (t) ->
+        if not t
+          $('#prompt').text 'There are no more transcription tasks currently'
+          return
         # -- DEBUG
+        console.log t
         for own k, v of t.parameters
           console.log k, v
-        t.parameters['mode'] = t.parameters['mode'] || 'text'
+        t.parameters['mode'] or= 'text'
         # -- onwards
         $('#segment').attr 'src', '/images/tmpS_mdRM_4.png'
         $('#segment').attr 'width', '100%'
@@ -36,8 +40,8 @@ html(lang="en")
       refresh_task = () ->
         $dm.getTasks (tasks) ->
           tasks = tasks.filter (t) ->
-            t.task.project_id is $dm.project_id
-          setup_task random_choice(tasks)['task']
+            t.task.project_id is $dm.project_id and not t.task.responses?
+          setup_task random_choice(tasks)?.task
       submit_task = (response) ->
         task = JSON.parse $(response).children('#transcribe[task]').val()
         answer =
