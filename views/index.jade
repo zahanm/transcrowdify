@@ -11,8 +11,8 @@ html(lang="en")
     :coffeescript
       $dm.server 'http://arya.stanford.edu:3777'
       $dm.api_key '6b044f121358683678e5e21de2202a5e0a0394d5'
-      $dm.project_id = 20
-      $dm.template_id = 10
+      $dm.project_id = 20 # XXX new transcrowdify id => 21
+      $dm.template_id = 10 # XXX need new transcrowdify template
       random_choice = (seq) ->
         if seq instanceof Array
           r = Math.floor( Math.random() * seq.length )
@@ -28,25 +28,30 @@ html(lang="en")
         # -- onwards
         $('#segment').attr 'src', '/images/tmpS_mdRM_4.png'
         $('#segment').attr 'width', '100%'
-        $('#transcribe[mode]').val t.parameters['mode']
+        $('#transcribe[task]').val JSON.stringify t
         if t.parameters['mode'] is 'text'
           $('#prompt').text 'Please transcribe the text'
         else
           $('#prompt').text 'Please transcribe the math'
+      refresh_task = () ->
+        $dm.getTasks (tasks) ->
+          tasks = tasks.filter (t) ->
+            t.task.project_id is $dm.project_id
+          setup_task random_choice(tasks)['task']
       submit_task = (response) ->
-        mode = $(response).children('#transcribe[mode]').val()
-        transcription = $(response).children('#transcribe[content]').val()
-        # SUBMIT IT TO DORMOUSE
+        task = JSON.parse $(response).children('#transcribe[task]').val()
+        answer =
+          transcription: $(response).children('#transcribe[content]').val()
+        $('#segment').attr 'src', '/images/loading.gif'
+        $('#segment').attr 'width', ''
+        $dm.answerTask task, answer, refresh_task
       $(document).ready ->
         # -- override form transcribe submit
         $('#transcribe').submit (e) ->
           submit_task e.target
           false
         # -- get tasks from this project
-        $dm.getTasks (tasks) ->
-          tasks = tasks.filter (t) ->
-            t.task.project_id is $dm.project_id
-          setup_task random_choice(tasks)['task']
+        refresh_task()
 
   body
     div#container.row
@@ -63,7 +68,7 @@ html(lang="en")
           p
             label(for="transcribe[content]", id="prompt") Please transcribe the text
           textarea(placeholder="Transcription", id="transcribe[content]", name="transcribe[content]", tabindex="1")
-          input(type="hidden", id="transcribe[mode]", name="transcribe[mode]")
+          input(type="hidden", id="transcribe[task]", name="transcribe[task]")
           p
             input(type="submit", value="Transcribe")
         hr
