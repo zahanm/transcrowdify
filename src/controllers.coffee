@@ -17,9 +17,7 @@ exports.configure = (server) ->
     if req.form
       req.form.complete (err, fields, files) ->
         segment fields, files
-      res.render 'status.jade', errors: []
-    else
-      res.render 'status.jade', errors: [ 'Upload malfunction' ]
+    res.redirect '/status'
 
   server.get '/status', (req, res) ->
     res.render 'status.jade', errors: []

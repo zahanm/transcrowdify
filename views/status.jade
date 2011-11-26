@@ -4,6 +4,28 @@ html(lang="en")
     title Transcription Status
     link(rel="stylesheet/less", type="text/css", href="styles/base.less")
     script(type="text/javascript", src="/js/less.min.js")
+    script(type="text/javascript", src="/js/dormouse.js")
+    script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js")
+    script(type="text/javascript", src="/js/jade.js")
+
+    :coffeescript
+      $dm.server 'http://arya.stanford.edu:3777'
+      $dm.api_key '6b044f121358683678e5e21de2202a5e0a0394d5'
+      $dm.project_id = 20 # XXX new transcrowdify id => 21
+      $dm.template_id = 10 # XXX need new transcrowdify template
+      jade = require 'jade'
+      template_str = '
+      ul#tasks_status
+        each task in tasks
+          li= task
+      '
+      console.log template_str
+      template_fn = jade.compile template_str, compileDebug: false
+      $(document).ready ->
+        $dm.getTasks (tasks) ->
+          tasks = tasks.filter (t) ->
+            t.task.project_id is $dm.project_id
+          $('#tasks_status').html template_fn tasks: tasks
 
   body
     div#container.row
@@ -17,5 +39,6 @@ html(lang="en")
         if errors.length
           ul.error
             each error in errors
-              li #{error}
-        p This is where we will show you how many segments are done and what is left, maybe?
+              li= error
+        div#tasks_status
+          p This is where we will show you how many segments are done and what is left, maybe?
