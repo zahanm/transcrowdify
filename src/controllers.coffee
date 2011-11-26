@@ -44,7 +44,18 @@ exports.configure = (server) ->
       res.redirect '/'
 
   server.get '/status', (req, res) ->
-    res.render 'status.jade', errors: []
+    Segment.find {}, (err, segments) ->
+      Journal.find {}, (err, journals) ->
+        context = journals.map (journal) ->
+          j = {}
+          j.title = journal.title
+          j._id = journal._id
+          j.segments = segments.filter (s) ->
+            String(journal._id) is String(s.journal_id)
+          j.completed = journal.completed || segments.every (s) ->
+            s.completed
+          j
+        res.render 'status.jade', journals: context
 
   server.get '/complete', (req, res) ->
     p = url.parse req.url, true
