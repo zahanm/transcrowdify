@@ -52,23 +52,28 @@ segment = (fields, files) ->
       segment.save dbchecker
 
 divide = (journal, cb) ->
-  split = spawn 'python', [ 'pdeff/split.py' ]
-  output = ''
-  split.stdout.on 'data', (buffer) ->
-    output += buffer.toString()
-  split.stderr.on 'data', (buffer) ->
-    console.error buffer.toString().trim()
-  split.on 'exit', (code) ->
-    cb [] if code isnt 0
-    try
-      cb JSON.parse output
-    catch err
-      cb []
-  split.stdin.write journal.file_path
-  split.stdin.end()
+  json_spawn 'python', [ 'pdeff/split.py' ], journal.file_path, [], cb
 
 join = (cb) ->
   cb '/images/loading.gif', '/images/loading.gif' if cb
+  # -- now it really begins
+  json_spawn 'python', [ 'pdeff/join.py' ], '', {}, cb
+
+json_spawn = (command, args, input, def, cb) ->
+  child = spawn command, args
+  output = ''
+  child.stdout.on 'data', (buffer) ->
+    output += buffer.toString()
+  child.stderr.on 'data', (buffer) ->
+    console.error buffer.toString().trim()
+  child.on 'exit', (code) ->
+    cb def if code isnt 0
+    try
+      cb JSON.parse output
+    catch err
+      cb def
+  child.stdin.write input
+  child.stdin.end()
 
 dbchecker = (err) ->
   throw new Error 'Error saving model to db' if err
