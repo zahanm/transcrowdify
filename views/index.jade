@@ -19,7 +19,7 @@ html(lang="en")
         center
           // src="#{task.parameters['imageUrl']}", width="100%"
           img#segment(src="/images/loading.gif")
-        form(action="/transcribe", id="transcribe")
+        form(action="/transcribe", method="post", id="transcribe")
           p
             label(for="transcribe[content]", id="prompt") Please transcribe the #{task.parameters['mode']}
           textarea(placeholder="Transcription", id="transcribe[content]", name="transcribe[content]", tabindex="1")

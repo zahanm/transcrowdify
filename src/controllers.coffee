@@ -1,6 +1,7 @@
 
 { spawn } = require 'child_process'
 fs = require 'fs'
+url = require 'url'
 mongoose = require 'mongoose'
 dormouse = require 'dormouse'
 
@@ -16,6 +17,10 @@ exports.configure = (server) ->
 
   server.get '/', (req, res) ->
     dormouse.getProjectTasks dormouse.project_id, (tasks) ->
+      p = url.parse req.url, true
+      if p.query['exclude']?
+        tasks = tasks.filter (t) ->
+          t.task.id isnt p.query['exclude']
       t = utils.randomChoice tasks
       console.log t.task # XXX
       res.render 'index.jade', task: t.task
@@ -25,6 +30,17 @@ exports.configure = (server) ->
       req.form.complete (err, fields, files) ->
         segment fields, files
     res.redirect '/status'
+
+  server.post '/transcribe', (req, res) ->
+    if req.form
+      req.form.complete (err, fields) ->
+        transcription = fields['transcribe[content]']
+        task_id = fields['transcribe[task_id]']
+        # TODO save answer to db
+        # TODO post answer to dormouse
+        res.redirect "/?exclude=#{task_id}"
+    else
+      res.redirect '/'
 
   server.get '/status', (req, res) ->
     res.render 'status.jade', errors: []
