@@ -16,14 +16,14 @@ exports.configure = (server) ->
   server.set 'view options', layout: false
 
   server.get '/', (req, res) ->
-    dormouse.getProjectTasks dormouse.project_id, (tasks) ->
-      p = url.parse req.url, true
-      if p.query['exclude']?
-        tasks = tasks.filter (t) ->
-          t.task.id isnt p.query['exclude']
-      t = utils.randomChoice tasks
-      console.log t.task # XXX
-      res.render 'index.jade', task: t.task
+    q = Segment.where('completed').ne(true)
+    p = url.parse req.url, true
+    if p.query['exclude']?
+      q.where('_id').ne(p.query['exclude'])
+    q.run (err, segments) ->
+      s = if segments? then utils.randomChoice segments else false
+      console.log s # XXX
+      res.render 'index.jade', segment: s
 
   server.post '/upload', (req, res) ->
     if req.form
@@ -35,10 +35,10 @@ exports.configure = (server) ->
     if req.form
       req.form.complete (err, fields) ->
         transcription = fields['transcribe[content]']
-        task_id = fields['transcribe[task_id]']
+        segment_id = fields['transcribe[_id]']
         # TODO save answer to db
         # TODO post answer to dormouse
-        res.redirect "/?exclude=#{task_id}"
+        res.redirect "/?exclude=#{segment_id}"
     else
       res.redirect '/'
 
@@ -65,11 +65,14 @@ segment = (fields, files) ->
   # -- divide into segments
   divide journal, (segments) ->
     # -- save Segments to db
-    segments.forEach (seg) ->
+    segments.forEach (seg, i) ->
+      # create the new task here, maybe use async forEach
       segment = new Segment
         file_path: seg.location
+        url: seg.location.slice(seg.location.indexOf('static') + 'static'.length)
         page: seg.page
-        trans_type: seg.type
+        trans_type: 'text' # XXX also wrong
+        task_id: i # XXX this is all wrong
         journal_id: journal._id
       segment.save dbchecker
 

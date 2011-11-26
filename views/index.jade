@@ -16,16 +16,19 @@ html(lang="en")
           li Sidebar item 1
           li Siderbar item 2
       div#main.column.grid_9
-        center
-          // src="#{task.parameters['imageUrl']}", width="100%"
-          img#segment(src="/images/loading.gif")
-        form(action="/transcribe", method="post", id="transcribe")
+        if !segment
           p
-            label(for="transcribe[content]", id="prompt") Please transcribe the #{task.parameters['mode']}
-          textarea(placeholder="Transcription", id="transcribe[content]", name="transcribe[content]", tabindex="1")
-          input(type="hidden", id="transcribe[task_id]", name="transcribe[task_id]", value="#{task.id}")
-          p
-            input(type="submit", value="Transcribe")
+            strong Nothing to transcribe currently, please upload a journal
+        else
+          center
+            img#segment(src="#{segment.url}", width="100%")
+          form(action="/transcribe", method="post", id="transcribe")
+            p
+              label(for="transcribe[content]", id="prompt") Please transcribe the #{segment.trans_type}
+            textarea(placeholder="Transcription", id="transcribe[content]", name="transcribe[content]", tabindex="1")
+            input(type="hidden", id="transcribe[_id]", name="transcribe[_id]", value="#{segment._id}")
+            p
+              input(type="submit", value="Transcribe")
         hr
         form(action="/upload", enctype="multipart/form-data", method="post")
           p

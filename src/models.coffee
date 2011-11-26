@@ -10,6 +10,7 @@ exports.define = ->
 
   SegmentSchema = new Schema
     file_path: String
+    url: String
     page: Number
     trans_type:
       type: String
@@ -17,6 +18,9 @@ exports.define = ->
     transcription:
       type: String
       default: ''
+    completed:
+      type: Boolean
+      defualt: false
     task_id: Number
     journal_id: Schema.ObjectId
 
