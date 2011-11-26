@@ -1,5 +1,6 @@
 
 { spawn } = require 'child_process'
+fs = require 'fs'
 mongoose = require 'mongoose'
 
 # -- models
@@ -22,6 +23,12 @@ exports.configure = (server) ->
   server.get '/status', (req, res) ->
     res.render 'status.jade', errors: []
 
+  server.get '/complete', (req, res) ->
+    join (transcribed, searchable) ->
+      res.render 'complete.jade',
+        transcribed: transcribed
+        searchable: searchable
+
 # -- helper functions
 
 segment = (fields, files) ->
@@ -32,7 +39,7 @@ segment = (fields, files) ->
   journal = new Journal
     title: fields['upload[title]']
     file_path: uploaded.path
-  journal.save checker
+  journal.save dbchecker
   # -- divide into segments
   divide journal, (segments) ->
     # -- save Segments to db
@@ -42,7 +49,7 @@ segment = (fields, files) ->
         page: seg.page
         trans_type: seg.type
         journal_id: journal._id
-      segment.save checker
+      segment.save dbchecker
 
 divide = (journal, cb) ->
   split = spawn 'python', [ 'pdeff/split.py' ]
@@ -60,5 +67,8 @@ divide = (journal, cb) ->
   split.stdin.write journal.file_path
   split.stdin.end()
 
-checker = (err) ->
+join = (cb) ->
+  cb '/images/loading.gif', '/images/loading.gif' if cb
+
+dbchecker = (err) ->
   throw new Error 'Error saving model to db' if err

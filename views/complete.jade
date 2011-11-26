@@ -1,0 +1,20 @@
+!!! 5
+html(lang="en")
+  head
+    title Transcription Status
+    link(rel="stylesheet/less", type="text/css", href="styles/base.less")
+    script(type="text/javascript", src="/js/less.min.js")
+
+  body
+    div#container.row
+      div#hdr.column.grid_12
+        h1 Journal transciption complete
+      nav#sidebar.column.grid_3
+        ul
+          li Sidebar item 1
+          li Siderbar item 2
+      div#main.column.grid_9
+        h4 Transcribed
+        p The journal contents have been <a href="#{transcribed}">transcribed</a> and math equations typed up in LaTeX.
+        h4 Searchable
+        p We also made a <a href="#{searchable}">searchable</a> version of your original journal which will help with finding the general location of some text. LaTeX'd math too.
