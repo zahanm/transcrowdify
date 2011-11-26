@@ -16,8 +16,11 @@ html(lang="en")
       jade = require 'jade'
       template_str = '
       ul#tasks_status
-        each task in tasks
-          li= task
+        each t in tasks
+          if t.task.responses && t.task.responses.length
+            li \#{t.task.name} is complete
+          else
+            li \#{t.task.name} is pending
       '
       console.log template_str
       template_fn = jade.compile template_str, compileDebug: false
@@ -41,4 +44,5 @@ html(lang="en")
             each error in errors
               li= error
         div#tasks_status
-          p This is where we will show you how many segments are done and what is left, maybe?
+          center
+            img(src="/images/loading.gif")
