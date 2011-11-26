@@ -90,7 +90,6 @@ def latex_to_pdf(raw_latex):
   with open(path.join('tmp', LATEX_BUILD_FNAME.format(format='tex')), 'w') as latex_file:
     latex_file.write(raw_latex)
   pdfcreator = ['pdflatex', '-interaction', 'nonstopmode', '-output-directory', 'tmp', LATEX_BUILD_FNAME.format(format='tex')]
-  print(pdfcreator)
   child = Popen(pdfcreator, stdout=PIPE)
   retcode = child.wait()
   if retcode != 0:

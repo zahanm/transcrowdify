@@ -14,7 +14,11 @@ html(lang="en")
           li Sidebar item 1
           li Siderbar item 2
       div#main.column.grid_9
-        h4 Transcribed
-        p The journal contents have been <a href="#{transcribed}">transcribed</a> and math equations typed up in LaTeX.
-        h4 Searchable
-        p We also made a <a href="#{searchable}">searchable</a> version of your original journal which will help with finding the general location of some text. LaTeX'd math too.
+        if journal
+          h4 Transcribed
+          p The journal contents have been <a href="#{journal.transcribed}">transcribed</a> and math equations typed up in LaTeX.
+          h4 Searchable
+          p We also made a <a href="#{journal.searchable}">searchable</a> version of your original journal which will help with finding the general location of some text. LaTeX'd math too.
+        else
+          p
+            strong Please specify a journal_id

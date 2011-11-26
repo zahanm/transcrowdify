@@ -47,10 +47,23 @@ exports.configure = (server) ->
     res.render 'status.jade', errors: []
 
   server.get '/complete', (req, res) ->
-    join (transcribed, searchable) ->
-      res.render 'complete.jade',
-        transcribed: transcribed
-        searchable: searchable
+    p = url.parse req.url, true
+    if p.query['journal_id']?
+      Journal.findById p.query['journal_id'], (err, journal) ->
+        if journal.completed
+          res.render 'complete.jade', journal: journal
+        else
+          join journal, (output) ->
+            if output.transcribed? and output.searchable?
+              journal.completed = true
+              journal.transcribed = utils.fsPathToUrl output.transcribed
+              journal.searchable = utils.fsPathToUrl output.searchable
+              journal.save (err) ->
+                res.render 'complete.jade', journal: journal
+            else
+              res.render 'complete.jade', journal: false
+    else
+      res.render 'complete.jade', journal: false
 
 # -- helper functions
 
@@ -70,7 +83,7 @@ segment = (fields, files) ->
       # create the new task here, maybe use async forEach
       segment = new Segment
         file_path: seg.location
-        url: seg.location.slice(seg.location.indexOf('static') + 'static'.length)
+        url: utils.fsPathToUrl seg.location
         page: seg.page
         trans_type: 'text' # XXX also wrong
         task_id: i # XXX this is all wrong
@@ -80,10 +93,18 @@ segment = (fields, files) ->
 divide = (journal, cb) ->
   json_spawn 'python', [ 'pdeff/split.py' ], journal.file_path, [], cb
 
-join = (cb) ->
-  cb '/images/loading.gif', '/images/loading.gif' if cb
-  # -- now it really begins
-  json_spawn 'python', [ 'pdeff/join.py' ], '', {}, cb
+join = (journal, cb) ->
+  Segment.find { journal_id: journal._id }, (err, segments) ->
+    incompleted = segments.some (s) ->
+      not s.completed
+    if incompleted
+      cb {}
+    input = JSON.stringify segments.map (s) ->
+      page: s.page
+      location: s.file_path
+      transcription: s.transcription
+      type: s.trans_type
+    json_spawn 'python', [ 'pdeff/join.py' ], input, {}, cb
 
 json_spawn = (command, args, input, def, cb) ->
   child = spawn command, args
@@ -100,6 +121,7 @@ json_spawn = (command, args, input, def, cb) ->
       cb def
   child.stdin.write input
   child.stdin.end()
+  true
 
 dbchecker = (err) ->
   throw new Error 'Error saving model to db' if err

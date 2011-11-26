@@ -7,6 +7,9 @@ exports.define = ->
   JournalSchema = new Schema
     title: String
     file_path: String
+    transcribed: String
+    searchable: String
+    completed: Boolean
 
   SegmentSchema = new Schema
     file_path: String

@@ -11,3 +11,7 @@ exports.randomChoice = (seq) ->
   else
     k = random_choice Object.keys seq
   seq[k]
+
+exports.fsPathToUrl = (p) ->
+  starter = p.indexOf 'static'
+  p.slice starter + 'static'.length
