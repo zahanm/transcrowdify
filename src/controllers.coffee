@@ -2,6 +2,9 @@
 { spawn } = require 'child_process'
 fs = require 'fs'
 mongoose = require 'mongoose'
+dormouse = require 'dormouse'
+
+utils = require './utils'
 
 # -- models
 Journal = mongoose.model 'Journal'
@@ -12,7 +15,10 @@ exports.configure = (server) ->
   server.set 'view options', layout: false
 
   server.get '/', (req, res) ->
-    res.render 'index.jade'
+    dormouse.getProjectTasks dormouse.project_id, (tasks) ->
+      t = utils.randomChoice tasks
+      console.log t.task # XXX
+      res.render 'index.jade', task: t.task
 
   server.post '/upload', (req, res) ->
     if req.form

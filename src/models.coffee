@@ -17,6 +17,7 @@ exports.define = ->
     transcription:
       type: String
       default: ''
+    task_id: Number
     journal_id: Schema.ObjectId
 
   mongoose.model 'Journal', JournalSchema

@@ -3,11 +3,19 @@ path = require 'path'
 express = require 'express'
 connect_form = require 'connect-form'
 mongoose = require 'mongoose'
-
-mongoose.connect 'mongodb://localhost/transcrowdify'
+dormouse = require 'dormouse'
 
 utils = require './utils'
 models = require './models'
+
+# -- configs
+
+mongoose.connect 'mongodb://localhost/transcrowdify'
+
+dormouse.server 'http://arya.stanford.edu:3777'
+dormouse.api_key '6b044f121358683678e5e21de2202a5e0a0394d5'
+dormouse.project_id = 20 # XXX new transcrowdify id => 21
+dormouse.template_id = 10 # XXX need new transcrowdify template
 
 models.define()
 server = express.createServer()
