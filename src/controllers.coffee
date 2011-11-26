@@ -16,7 +16,7 @@ exports.configure = (server) ->
   server.set 'view options', layout: false
 
   server.get '/', (req, res) ->
-    q = Segment.where('completed').ne(true)
+    q = Segment.where 'completed', false
     p = url.parse req.url, true
     if p.query['exclude']?
       q.where('_id').ne(p.query['exclude'])
@@ -36,7 +36,8 @@ exports.configure = (server) ->
       req.form.complete (err, fields) ->
         transcription = fields['transcribe[content]']
         segment_id = fields['transcribe[_id]']
-        # TODO save answer to db
+        q = Segment.update { '_id': segment_id }, { transcription: transcription, completed: true }
+        q.run 'update'
         # TODO post answer to dormouse
         res.redirect "/?exclude=#{segment_id}"
     else

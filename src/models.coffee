@@ -20,7 +20,7 @@ exports.define = ->
       default: ''
     completed:
       type: Boolean
-      defualt: false
+      default: false
     task_id: Number
     journal_id: Schema.ObjectId
 
