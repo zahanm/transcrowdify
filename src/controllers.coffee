@@ -22,7 +22,6 @@ exports.configure = (server) ->
       q.where('_id').ne(p.query['exclude'])
     q.run (err, segments) ->
       s = if segments? then utils.randomChoice segments else false
-      console.log s # XXX
       res.render 'index.jade', segment: s
 
   server.post '/upload', (req, res) ->
@@ -44,8 +43,8 @@ exports.configure = (server) ->
       res.redirect '/'
 
   server.get '/status', (req, res) ->
-    Segment.find {}, (err, segments) ->
-      Journal.find {}, (err, journals) ->
+    Segment.find (err, segments) ->
+      Journal.find (err, journals) ->
         context = journals.map (journal) ->
           j = {}
           j.title = journal.title
@@ -98,6 +97,7 @@ segment = (fields, files) ->
         page: seg.page
         trans_type: 'text' # XXX also wrong
         task_id: i # XXX this is all wrong
+        layout_order: i
         journal_id: journal._id
       segment.save dbchecker
 
@@ -105,7 +105,7 @@ divide = (journal, cb) ->
   json_spawn 'python', [ 'pdeff/split.py' ], journal.file_path, [], cb
 
 join = (journal, cb) ->
-  Segment.find { journal_id: journal._id }, (err, segments) ->
+  Segment.find { journal_id: journal._id }, [], { sort: 'layout_order' }, (err, segments) ->
     incompleted = segments.some (s) ->
       not s.completed
     if incompleted

@@ -25,6 +25,7 @@ exports.define = ->
       type: Boolean
       default: false
     task_id: Number
+    layout_order: Number
     journal_id: Schema.ObjectId
 
   mongoose.model 'Journal', JournalSchema
