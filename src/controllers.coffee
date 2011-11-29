@@ -90,16 +90,28 @@ segment = (fields, files) ->
   divide journal, (segments) ->
     # -- save Segments to db
     segments.forEach (seg, i) ->
-      # create the new task here, maybe use async forEach
       segment = new Segment
         file_path: seg.location
         url: utils.fsPathToUrl seg.location
         page: seg.page
         trans_type: 'text' # XXX also wrong
-        task_id: i # XXX this is all wrong
         layout_order: i
         journal_id: journal._id
-      segment.save dbchecker
+      segment.save (err, saved) ->
+        # -- create dormouse task for segment
+        task_info =
+          name: "#{journal._id} #{saved._id}"
+          project_id: dormouse.project_id
+          template_id: dormouse.template_id
+          parameters:
+            segment_url: saved.url
+            mode: saved.trans_type
+            id: saved._id
+          replication: 1
+          duplication: 1
+        dormouse.createTask task_info, (r) ->
+          try
+            console.log JSON.parse r
 
 divide = (journal, cb) ->
   json_spawn 'python', [ 'pdeff/split.py' ], journal.file_path, [], cb
