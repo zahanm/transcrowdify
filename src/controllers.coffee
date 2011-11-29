@@ -110,8 +110,7 @@ segment = (fields, files) ->
           replication: 1
           duplication: 1
         dormouse.createTask task_info, (r) ->
-          try
-            console.log JSON.parse r
+          Segment.update( { _id: saved._id }, { task_id: r.task.id }, {}, dbchecker)
 
 divide = (journal, cb) ->
   json_spawn 'python', [ 'pdeff/split.py' ], journal.file_path, [], cb
@@ -146,5 +145,5 @@ json_spawn = (command, args, input, def, cb) ->
   child.stdin.end()
   true
 
-dbchecker = (err) ->
-  throw new Error 'Error saving model to db' if err
+dbchecker = (err, doc) ->
+  throw new Error 'Error saving #{doc} to db' if err
