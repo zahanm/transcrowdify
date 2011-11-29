@@ -2,7 +2,16 @@
 http = require 'http'
 async = require 'async'
 
-ids = [433..438]
+switch len(process.argv)
+  when 3
+    from = 0
+    to = process.argv[2]
+  when 4
+    from = process.argv[2]
+    to = process.argv[3]
+  else
+    process.exit(1)
+ids = [from..to]
 
 async.forEachSeries ids, (id, next) ->
     req = http.request
