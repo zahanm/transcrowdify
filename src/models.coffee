@@ -9,7 +9,9 @@ exports.define = ->
     file_path: String
     transcribed: String
     searchable: String
-    completed: Boolean
+    completed:
+      type: Boolean
+      default: false
 
   SegmentSchema = new Schema
     file_path: String
