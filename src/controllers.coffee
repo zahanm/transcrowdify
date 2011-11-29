@@ -107,8 +107,6 @@ segment = (fields, files) ->
             segment_url: saved.url
             mode: saved.trans_type
             id: saved._id
-          replication: 1
-          duplication: 1
         dormouse.createTask task_info, (r) ->
           Segment.update( { _id: saved._id }, { task_id: r.task.id }, {}, dbchecker)
 
