@@ -14,8 +14,8 @@ mongoose.connect 'mongodb://localhost/transcrowdify'
 
 dormouse.server 'http://arya.stanford.edu:3777'
 dormouse.api_key '6b044f121358683678e5e21de2202a5e0a0394d5'
-dormouse.project_id = 20 # XXX new transcrowdify id => 21
-dormouse.template_id = 10 # XXX need new transcrowdify template
+dormouse.project_id = 21 # transcrowdify
+dormouse.template_id = 11 # zahanm/transcribe.template
 
 models.define()
 server = express.createServer()
