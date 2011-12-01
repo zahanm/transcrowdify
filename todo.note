@@ -1,0 +1,38 @@
+
+figure out less grid - done
+file uplaods in form template - done
+file uploads parsed by formidable and saved appropriately - done
+pdfsplit using NamedTemporaryFile's at each step - done
+pdfjoin using namedTemporaryFile's at each step - done
+splitting the uploaded pdf into segments - done
+gating to only allow pdf uplaods - done
+mongoose orm with journals and segments (and users) - done
+mongoose storage of files, work with pdf uploads - done
+clientside pulling segments as tasks from Dormouse - done
+clientside formatting and displaying said tasks on homepage - done
+clientside submitting responses to tasks - done
+get tasks for /index from db - done
+save transcription in db - done
+join() in controllers.coffee - done
+when all tasks in a journal are complete make two outputs on /complete - done
+redo /status - done
+ordering of segments correct on join.py - done
+Dormouse template for journal transcription with eligibility and parameters set - done
+serverside submitting segments as tasks to Dormouse - done
+
+pull tasks from dormouse to show on homepage
+submit transcriptions to answer.json
+check that responses submitted via answer.json work
+
+task agnostic display on homepage using templates
+categorize segment task that also updates mongodb segments
+image quality after segmenting and conversion
+better image segmenting using PIL library
+
+--
+
+dormouse = require 'dormouse'
+dormouse.server 'http://arya.stanford.edu:3777'
+dormouse.api_key '6b044f121358683678e5e21de2202a5e0a0394d5'
+task = { project_id: 21, template_id: 11, parameters:  { segment_url: '/images/tmpEQuzit_5.png', mode: 'text', id: '43112ad749bff57000022' }, replication: 1, duplication: 1 }
+dormouse.createTask task, (r) -> console.log JSON.parse r
