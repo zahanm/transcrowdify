@@ -29,6 +29,12 @@ categorize segment task that also updates mongodb segments
 image quality after segmenting and conversion
 better image segmenting using PIL library
 
+dormouse authentication clientside
+progress - each individual page
+track how each user does - stats for each user
+  emtional effect of seeing the crowd working on your journal
+signup page in Dog / Jabberwocky
+
 --
 
 dormouse = require 'dormouse'
