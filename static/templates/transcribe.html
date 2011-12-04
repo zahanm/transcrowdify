@@ -13,3 +13,17 @@ response:
  - transcription
 
 -->
+
+<center>
+  <img id="segment" src="#{segment.url}" width="100%"></img>
+</center>
+<form action="/transcribe" method="post" id="transcribe">
+  <p>
+    <label for="transcribe[content]" id="prompt">Please transcribe the #{segment.trans_type}</label>
+  </p>
+  <textarea id="transcribe[content]" placeholder="Transcription" name="transcribe[content]" tabindex="1"></textarea>
+  <input type="hidden" id="transcribe[_id]" name="transcribe[_id]" value="#{segment._id}">
+  <p>
+    <input type="submit" value="Transcribe">
+  </p>
+</form>
