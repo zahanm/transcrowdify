@@ -5,7 +5,26 @@ html(lang="en")
     link(rel="stylesheet/less", type="text/css", href="styles/base.less")
     link(rel="stylesheet/less", type="text/css", href="styles/index.less")
     script(type="text/javascript", src="/js/less.min.js")
-    // script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js")
+    script(type="text/javascript", src="/js/dormouse.js")
+    script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js")
+
+    :coffeescript
+      dormouse.server 'http://arya.stanford.edu:3777'
+      dormouse.api_key '6b044f121358683678e5e21de2202a5e0a0394d5' # XXX should not be used
+      dormouse.user 'zahanm' # XXX should only be retrievable - set remotely
+      dormouse.project_id = 21 # transcrowdify
+      $(document).ready ->
+        q = dormouse.getTasks()
+        q.where 'project_id', dormouse.project_id
+        q.limit 1
+        q.run (tasks) ->
+          task = tasks[0]
+          $.ajax
+            url: '/templates/transcribe.html'
+            success: (snippet) ->
+              rendered = dormouse.render snippet, task
+              $('#task').html rendered
+            dataType: 'html'
 
   body
     div#container.row
@@ -16,19 +35,11 @@ html(lang="en")
           li
             a(href="status") Transcription Status
       div#main.column.grid_9
-        if !segment
-          p
+        div#task
+          center#loading
+            img(src="/images/loading.gif")
+          p#nothing
             strong Nothing to transcribe currently, please upload a journal
-        else
-          center
-            img#segment(src="#{segment.url}", width="100%")
-          form(action="/transcribe", method="post", id="transcribe")
-            p
-              label(for="transcribe[content]", id="prompt") Please transcribe the #{segment.trans_type}
-            textarea(placeholder="Transcription", id="transcribe[content]", name="transcribe[content]", tabindex="1")
-            input(type="hidden", id="transcribe[_id]", name="transcribe[_id]", value="#{segment._id}")
-            p
-              input(type="submit", value="Transcribe")
         hr
         form(action="/upload", enctype="multipart/form-data", method="post")
           p
