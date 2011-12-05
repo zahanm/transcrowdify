@@ -28,7 +28,8 @@ exports.configure = (server) ->
     if req.form
       req.form.complete (err, fields) ->
         category = fields['categorize[content]']
-        segment_id = fields['categorize[_id]']
+        task_id = fields['categorize[task_id]']
+        segment_id = fields['categorize[segment_id]']
         Segment.findById segment_id, (err, segment) ->
           segment.mode = category
           segment.save dbchecker
@@ -42,7 +43,8 @@ exports.configure = (server) ->
     if req.form
       req.form.complete (err, fields) ->
         transcription = fields['transcribe[content]']
-        segment_id = fields['transcribe[_id]']
+        task_id = fields['transcribe[task_id]']
+        segment_id = fields['transcribe[segment_id]']
         q = Segment.update { '_id': segment_id }, { transcription: transcription, completed: true }
         q.run 'update'
         # TODO post answer to dormouse
