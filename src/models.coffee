@@ -26,7 +26,6 @@ exports.define = ->
     completed:
       type: Boolean
       default: false
-    task_id: Number
     layout_order: Number
     journal_id: Schema.ObjectId
 

@@ -27,7 +27,7 @@ exports.configure = (server) ->
   server.post '/upload', (req, res) ->
     if req.form
       req.form.complete (err, fields, files) ->
-        segment fields, files
+        split fields, files
     res.redirect '/status'
 
   server.post '/transcribe', (req, res) ->
@@ -77,7 +77,7 @@ exports.configure = (server) ->
 
 # -- helper functions
 
-segment = (fields, files) ->
+split = (fields, files) ->
   uploaded = files['upload[file]']
   if uploaded.type isnt 'application/pdf'
     return fs.unlink uploaded.path
@@ -87,28 +87,44 @@ segment = (fields, files) ->
     file_path: uploaded.path
   journal.save dbchecker
   # -- divide into segments
-  json_spawn 'python', [ 'pdeff/split.py' ], journal.file_path, [], (segments) ->
-    # -- save Segments to db
-    segments.forEach (seg, i) ->
-      segment = new Segment
-        file_path: seg.location
-        url: utils.fsPathToUrl seg.location
-        page: seg.page
-        mode: 'text' # XXX also wrong
-        layout_order: i
-        journal_id: journal._id
-      segment.save (err, saved) ->
-        # -- create dormouse task for segment
-        task_info =
-          name: "#{journal._id} #{saved._id}"
-          project_id: dormouse.project_id
-          template_id: dormouse.template_id
-          parameters:
-            segment_url: saved.url
-            mode: saved.mode
-            segment_id: saved._id
-        dormouse.createTask task_info, (r) ->
-          Segment.update( { _id: saved._id }, { task_id: r.task.id }, {}, dbchecker)
+  json_spawn 'python', [ 'pdeff/split.py' ], journal.file_path, [], save_segments_to_db
+
+save_segments_to_db = (segments) ->
+  # -- save Segments to db
+  segments.forEach (seg, i) ->
+    segment = new Segment
+      file_path: seg.location
+      url: utils.fsPathToUrl seg.location
+      page: seg.page
+      layout_order: i
+      journal_id: journal._id
+    segment.save (err, saved) ->
+      create_categorize_task saved
+
+create_categorize_task = (segment) ->
+  # -- create dormouse task for segment
+  task_info =
+    name: "#{journal._id} #{segment._id} categorize"
+    project_id: dormouse.project_id
+    template_id: dormouse.categorize_template_id
+    parameters:
+      segment_url: segment.url
+      segment_id: segment._id
+  dormouse.createTask task_info, (r) ->
+    throw new Error('Error creating categorize dormouse task') unless r
+
+create_transcribe_task = (segment) ->
+  # -- create dormouse task for segment
+  task_info =
+    name: "#{journal._id} #{segment._id} transcribe"
+    project_id: dormouse.project_id
+    template_id: dormouse.transcribe_template_id
+    parameters:
+      segment_url: segment.url
+      mode: segment.mode
+      segment_id: segment._id
+  dormouse.createTask task_info, (r) ->
+    throw new Error('Error creating transcribe dormouse task') unless r
 
 join = (journal, cb) ->
   Segment.find { journal_id: journal._id }, [], { sort: 'layout_order' }, (err, segments) ->
