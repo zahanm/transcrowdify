@@ -6,7 +6,7 @@ input:
 parameters:
  - segment_url
  - mode
- - id
+ - segment_id
 
 response:
  - id
@@ -22,7 +22,7 @@ response:
     <label for="transcribe[content]" id="prompt">Please transcribe the {{ mode }}</label>
   </p>
   <textarea id="transcribe[content]" placeholder="Transcription" name="transcribe[content]" tabindex="1"></textarea>
-  <input type="hidden" id="transcribe[_id]" name="transcribe[_id]" value="{{ id }}">
+  <input type="hidden" id="transcribe[_id]" name="transcribe[_id]" value="{{ segment_id }}">
   <p>
     <input type="submit" value="Transcribe">
   </p>

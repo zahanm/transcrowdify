@@ -106,7 +106,7 @@ segment = (fields, files) ->
           parameters:
             segment_url: saved.url
             mode: saved.mode
-            id: saved._id
+            segment_id: saved._id
         dormouse.createTask task_info, (r) ->
           Segment.update( { _id: saved._id }, { task_id: r.task.id }, {}, dbchecker)
 

@@ -15,7 +15,7 @@ mongoose.connect 'mongodb://localhost/transcrowdify'
 dormouse.server 'http://arya.stanford.edu:3777'
 dormouse.api_key '6b044f121358683678e5e21de2202a5e0a0394d5'
 dormouse.project_id = 21 # transcrowdify
-dormouse.transcribe_template_id = 11 # zahanm/transcribe.template
+dormouse.transcribe_template_id = 13 # zahanm/transcribe.template
 dormouse.categorize_template_id = 12 # zahanm/categorize.template
 
 models.define()
