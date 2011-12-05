@@ -87,7 +87,7 @@ segment = (fields, files) ->
     file_path: uploaded.path
   journal.save dbchecker
   # -- divide into segments
-  divide journal, (segments) ->
+  json_spawn 'python', [ 'pdeff/split.py' ], journal.file_path, [], (segments) ->
     # -- save Segments to db
     segments.forEach (seg, i) ->
       segment = new Segment
@@ -109,9 +109,6 @@ segment = (fields, files) ->
             id: saved._id
         dormouse.createTask task_info, (r) ->
           Segment.update( { _id: saved._id }, { task_id: r.task.id }, {}, dbchecker)
-
-divide = (journal, cb) ->
-  json_spawn 'python', [ 'pdeff/split.py' ], journal.file_path, [], cb
 
 join = (journal, cb) ->
   Segment.find { journal_id: journal._id }, [], { sort: 'layout_order' }, (err, segments) ->

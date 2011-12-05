@@ -13,6 +13,9 @@ html(lang="en")
       $dm.api_key '6b044f121358683678e5e21de2202a5e0a0394d5' # XXX should not be used
       $dm.user = 'zahanm' # XXX should only be retrievable - set remotely
       $dm.project_id = 21 # transcrowdify
+      template_urls =
+        11: '/templates/transcribe.html' # zahanm/transcribe.template
+        12: '/templates/categorize.html' # zahanm/categorize.template
       $(document).ready ->
         q = $dm.getTasks()
         q.where 'project_id', $dm.project_id
@@ -23,12 +26,9 @@ html(lang="en")
             $('#loading').hide()
             return $('#nothing').show()
           task = tasks[0]
-          $.ajax
-            url: '/templates/transcribe.html'
-            success: (snippet) ->
-              rendered = $dm.render snippet, task
-              $('#task').html rendered
-            dataType: 'html'
+          $.get template_urls[task.template_id], (snippet) ->
+            rendered = $dm.render snippet, task
+            $('#task').html rendered
 
   body
     div#container.row

@@ -1,0 +1,31 @@
+<!-- Dormouse-Task-Meta
+
+input:
+ - segment
+
+parameters:
+ - segment_url
+ - id
+
+response:
+ - id
+ - mode
+
+-->
+
+<center>
+  <img id="segment" src="{{ segment_url }}" width="100%"></img>
+</center>
+<form action="/categorize" method="post" id="categorize">
+  <p>
+    <label for="categorize[content]" id="prompt">Does this segment contain math or text?</label>
+  </p>
+  <select id="categorize[content]" name="categorize[content]" autofocus>
+    <option value="text" selected>Text</option>
+    <option value="math">Math</option>
+  </select>
+  <input type="hidden" id="categorize[_id]" name="categorize[_id]" value="{{ id }}">
+  <p>
+    <input type="submit" value="Categorize">
+  </p>
+</form>
