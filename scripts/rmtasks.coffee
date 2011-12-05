@@ -2,7 +2,7 @@
 http = require 'http'
 async = require 'async'
 
-switch len(process.argv)
+switch process.argv.length
   when 3
     from = 0
     to = process.argv[2]
@@ -10,6 +10,7 @@ switch len(process.argv)
     from = process.argv[2]
     to = process.argv[3]
   else
+    console.log 'usage: rmtasks.coffee [<from>] <to>'
     process.exit(1)
 ids = [from..to]
 
