@@ -16,19 +16,24 @@ exports.configure = (server) ->
   server.set 'view options', layout: false
 
   server.get '/', (req, res) ->
-    q = Segment.where 'completed', false
-    p = url.parse req.url, true
-    if p.query['exclude']?
-      q.where('_id').ne(p.query['exclude'])
-    q.run (err, segments) ->
-      s = if segments? then utils.randomChoice segments else false
-      res.render 'index.jade', segment: s
+    res.render 'index.jade'
 
   server.post '/upload', (req, res) ->
     if req.form
       req.form.complete (err, fields, files) ->
         split fields, files
     res.redirect '/status'
+
+  server.post '/categorize', (req, res) ->
+    if req.form
+      req.form.complete (err, fields) ->
+        category = fields['categorize[content]']
+        segment_id = fields['categorize[_id]']
+        q = Segment.update { '_id': segment_id }, { mode: category }
+        q.run 'update', (err, segment) ->
+          create_transcribe_task segment
+        # TODO post answer to dormouse
+    res.redirect '/'
 
   server.post '/transcribe', (req, res) ->
     if req.form
