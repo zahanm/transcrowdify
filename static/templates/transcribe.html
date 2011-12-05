@@ -21,7 +21,7 @@ response:
   <p>
     <label for="transcribe[content]" id="prompt">Please transcribe the {{ mode }}</label>
   </p>
-  <textarea id="transcribe[content]" placeholder="Transcription" name="transcribe[content]" tabindex="1"></textarea>
+  <textarea id="transcribe[content]" placeholder="Transcription" name="transcribe[content]" autofocus></textarea>
   <input type="hidden" id="transcribe[_id]" name="transcribe[_id]" value="{{ segment_id }}">
   <p>
     <input type="submit" value="Transcribe">

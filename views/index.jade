@@ -19,11 +19,12 @@ html(lang="en")
       $(document).ready ->
         q = $dm.getTasks()
         q.eq 'project_id', $dm.project_id
+        q.iscomplete false
         if '?exclude=' in document.location.href # poor man's query string parsing
           s = document.location.href
           start = s.indexOf('?exclude=') + '?exclude='.length
           end = if s.indexOf('&') >= 0 then s.indexOf('&') else s.length
-          exclude = document.location.slice start, end
+          exclude = s.slice start, end
           q.ne 'segment_id', exclude
         q.order_by '?'
         q.limit 1
