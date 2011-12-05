@@ -29,8 +29,9 @@ exports.configure = (server) ->
       req.form.complete (err, fields) ->
         category = fields['categorize[content]']
         segment_id = fields['categorize[_id]']
-        q = Segment.update { '_id': segment_id }, { mode: category }
-        q.run 'update', (err, segment) ->
+        Segment.findById segment_id, (err, segment) ->
+          segment.mode = category
+          segment.save dbchecker
           create_transcribe_task segment
         # TODO post answer to dormouse
         res.redirect "/?exclude=#{segment_id}"
