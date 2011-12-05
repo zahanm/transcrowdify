@@ -17,7 +17,7 @@ exports.define = ->
     file_path: String
     url: String
     page: Number
-    trans_type:
+    mode:
       type: String
       enum: [ 'text', 'math' ]
     transcription:

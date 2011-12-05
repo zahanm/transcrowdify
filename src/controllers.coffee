@@ -94,7 +94,7 @@ segment = (fields, files) ->
         file_path: seg.location
         url: utils.fsPathToUrl seg.location
         page: seg.page
-        trans_type: 'text' # XXX also wrong
+        mode: 'text' # XXX also wrong
         layout_order: i
         journal_id: journal._id
       segment.save (err, saved) ->
@@ -105,7 +105,7 @@ segment = (fields, files) ->
           template_id: dormouse.template_id
           parameters:
             segment_url: saved.url
-            mode: saved.trans_type
+            mode: saved.mode
             id: saved._id
         dormouse.createTask task_info, (r) ->
           Segment.update( { _id: saved._id }, { task_id: r.task.id }, {}, dbchecker)
@@ -123,7 +123,7 @@ join = (journal, cb) ->
       page: s.page
       location: s.file_path
       transcription: s.transcription
-      type: s.trans_type
+      type: s.mode
     json_spawn 'python', [ 'pdeff/join.py' ], input, {}, cb
 
 json_spawn = (command, args, input, def, cb) ->

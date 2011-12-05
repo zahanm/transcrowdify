@@ -25,6 +25,6 @@ html(lang="en")
           ul.segments
             each s in journal.segments
               if s.completed
-                li <a href="#{s.url}">Segment #{s._id}</a> on page #{s.page} of type #{s.trans_type} is complete
+                li <a href="#{s.url}">Segment #{s._id}</a> on page #{s.page} of type #{s.mode} is complete
               else
-                li <a href="#{s.url}">Segment #{s._id}</a> on page #{s.page} of type #{s.trans_type} is pending
+                li <a href="#{s.url}">Segment #{s._id}</a> on page #{s.page} of type #{s.mode} is pending
