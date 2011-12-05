@@ -33,7 +33,9 @@ exports.configure = (server) ->
         q.run 'update', (err, segment) ->
           create_transcribe_task segment
         # TODO post answer to dormouse
-    res.redirect '/'
+        res.redirect "/?exclude=#{segment_id}"
+    else
+      res.redirect '/'
 
   server.post '/transcribe', (req, res) ->
     if req.form

@@ -40,7 +40,7 @@ def convert_pages(page_fnames):
   for page, page_fname in enumerate(page_fnames):
     png_file = NamedTemporaryFile(suffix='.png', dir=path.abspath('./tmp/'), delete=False)
     png_file.close()
-    args = ['convert', page_fname, '-quality', '4', png_file.name]
+    args = ['convert', page_fname, '-quality', '5', png_file.name]
     retcode = call(args)
     if retcode != 0:
       raise RuntimeError('Error while converting pdf to png')

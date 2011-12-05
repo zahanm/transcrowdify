@@ -42,3 +42,9 @@ dormouse.server 'http://arya.stanford.edu:3777'
 dormouse.api_key '6b044f121358683678e5e21de2202a5e0a0394d5'
 task = { project_id: 21, template_id: 11, parameters:  { segment_url: '/images/tmpEQuzit_5.png', mode: 'text', id: '43112ad749bff57000022' }, replication: 1, duplication: 1 }
 dormouse.createTask task, (r) -> console.log JSON.parse r
+
+--
+
+dividing
+
+scan through line by line looking for comparitively less intense parts

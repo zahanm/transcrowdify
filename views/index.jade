@@ -18,7 +18,13 @@ html(lang="en")
         14: '/templates/categorize.html' # zahanm/categorize.template
       $(document).ready ->
         q = $dm.getTasks()
-        q.where 'project_id', $dm.project_id
+        q.eq 'project_id', $dm.project_id
+        if '?exclude=' in document.location.href # poor man's query string parsing
+          s = document.location.href
+          start = s.indexOf('?exclude=') + '?exclude='.length
+          end = if s.indexOf('&') >= 0 then s.indexOf('&') else s.length
+          exclude = document.location.slice start, end
+          q.ne 'segment_id', exclude
         q.order_by '?'
         q.limit 1
         q.run (tasks) ->
@@ -37,7 +43,7 @@ html(lang="en")
       nav#sidebar.column.grid_3
         ul
           li
-            a(href="status") Transcription Status
+            a(href="/status") Transcription Status
       div#main.column.grid_9
         div#task
           center#loading
