@@ -94,9 +94,9 @@ split = (fields, files) ->
     file_path: uploaded.path
   journal.save dbchecker
   # -- divide into segments
-  json_spawn 'python', [ 'pdeff/split.py' ], journal.file_path, [], save_segments_to_db
+  json_spawn 'python', [ 'pdeff/split.py' ], journal.file_path, [], save_segments_to_db.bind(this, journal)
 
-save_segments_to_db = (segments) ->
+save_segments_to_db = (journal, segments) ->
   # -- save Segments to db
   segments.forEach (seg, i) ->
     segment = new Segment
@@ -111,9 +111,9 @@ save_segments_to_db = (segments) ->
 create_categorize_task = (segment) ->
   # -- create dormouse task for segment
   task_info =
-    name: "#{journal._id} #{segment._id} categorize"
+    name: "categorize #{segment._id}"
     project_id: dormouse.project_id
-    template_id: dormouse.categorize_template_id
+    template_id: 14 # zahanm/categorize.template
     parameters:
       segment_url: segment.url
       segment_id: segment._id
@@ -123,9 +123,9 @@ create_categorize_task = (segment) ->
 create_transcribe_task = (segment) ->
   # -- create dormouse task for segment
   task_info =
-    name: "#{journal._id} #{segment._id} transcribe"
+    name: "transcribe #{segment._id}"
     project_id: dormouse.project_id
-    template_id: dormouse.transcribe_template_id
+    template_id: 13 # zahanm/transcribe.template
     parameters:
       segment_url: segment.url
       mode: segment.mode
