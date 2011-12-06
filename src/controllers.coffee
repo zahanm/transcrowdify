@@ -34,7 +34,10 @@ exports.configure = (server) ->
           segment.mode = category
           segment.save dbchecker
           create_transcribe_task segment
-        # TODO post answer to dormouse
+        # post answer to dormouse
+        dormouse.answerTask task_id, { mode: category }, (err, r) ->
+          console.log r # DEBUG
+          throw new Error('Error answering categorize dormouse task') if err
         res.redirect "/?exclude=#{segment_id}"
     else
       res.redirect '/'
@@ -47,7 +50,10 @@ exports.configure = (server) ->
         segment_id = fields['transcribe[segment_id]']
         q = Segment.update { '_id': segment_id }, { transcription: transcription, completed: true }
         q.run 'update'
-        # TODO post answer to dormouse
+        # post answer to dormouse
+        dormouse.answerTask task_id, { transcription: transcription }, (err, r) ->
+          console.log r # DEBUG
+          throw new Error('Error answering transcribe dormouse task') if err
         res.redirect "/?exclude=#{segment_id}"
     else
       res.redirect '/'
@@ -120,8 +126,8 @@ create_categorize_task = (segment) ->
     parameters:
       segment_url: segment.url
       segment_id: segment._id
-  dormouse.createTask task_info, (r) ->
-    throw new Error('Error creating categorize dormouse task') unless r
+  dormouse.createTask task_info, (err, r) ->
+    throw new Error('Error creating categorize dormouse task') if err
 
 create_transcribe_task = (segment) ->
   # -- create dormouse task for segment
@@ -133,8 +139,8 @@ create_transcribe_task = (segment) ->
       segment_url: segment.url
       mode: segment.mode
       segment_id: segment._id
-  dormouse.createTask task_info, (r) ->
-    throw new Error('Error creating transcribe dormouse task') unless r
+  dormouse.createTask task_info, (err, r) ->
+    throw new Error('Error creating transcribe dormouse task') if err
 
 join = (journal, cb) ->
   Segment.find { journal_id: journal._id }, [], { sort: 'layout_order' }, (err, segments) ->
