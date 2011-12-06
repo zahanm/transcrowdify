@@ -28,8 +28,8 @@ html(lang="en")
           q.ne 'segment_id', exclude
         q.order_by '?'
         q.limit 1
-        q.run (tasks) ->
-          if not tasks.length
+        q.run (err, tasks) ->
+          if err or not tasks.length
             $('#loading').hide()
             return $('#nothing').show()
           task = tasks[0]
