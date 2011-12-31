@@ -29,7 +29,12 @@ task 'clean', 'clean up assembled and built js', (options) ->
       fs.unlinkSync path.join jslib, file
 
 task 'docs', 'build docs for .coffee files using docco', (options) ->
-  docco = spawn "docco #{coffeelib}/*.coffee"
+  srcfiles = []
+  files = fs.readdirSync "#{coffeelib}"
+  for file in files
+    if '.coffee' is path.extname file
+      srcfiles.push path.join coffeelib, file
+  docco = spawn 'docco', srcfiles
   docco.stdout.on 'data', (data) ->
     console.log data.toString().trim()
   docco.stderr.on 'data', (data) ->
