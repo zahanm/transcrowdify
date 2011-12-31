@@ -4,6 +4,7 @@
 .*.swp
 
 node_modules
+py_packages
 
 *.sublime-*
 *.note
