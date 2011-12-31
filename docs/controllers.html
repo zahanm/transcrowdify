@@ -1,0 +1,156 @@
+<!DOCTYPE html>  <html> <head>   <title>controllers.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">                                           <a class="source" href="controllers.html">                 controllers.coffee               </a>                                           <a class="source" href="models.html">                 models.coffee               </a>                                           <a class="source" href="server.html">                 server.coffee               </a>                                           <a class="source" href="utils.html">                 utils.coffee               </a>                        </div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               controllers.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span class="p">{</span> <span class="nx">spawn</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">require</span> <span class="s1">&#39;child_process&#39;</span>
+<span class="nv">fs = </span><span class="nx">require</span> <span class="s1">&#39;fs&#39;</span>
+<span class="nv">url = </span><span class="nx">require</span> <span class="s1">&#39;url&#39;</span>
+<span class="nv">mongoose = </span><span class="nx">require</span> <span class="s1">&#39;mongoose&#39;</span>
+<span class="nv">dormouse = </span><span class="nx">require</span> <span class="s1">&#39;dormouse&#39;</span>
+
+<span class="nv">utils = </span><span class="nx">require</span> <span class="s1">&#39;./utils&#39;</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>-- models</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">Journal = </span><span class="nx">mongoose</span><span class="p">.</span><span class="nx">model</span> <span class="s1">&#39;Journal&#39;</span>
+<span class="nv">Segment = </span><span class="nx">mongoose</span><span class="p">.</span><span class="nx">model</span> <span class="s1">&#39;Segment&#39;</span>
+
+<span class="nv">exports.configure = </span><span class="nf">(server) -&gt;</span>
+
+  <span class="nx">server</span><span class="p">.</span><span class="nx">set</span> <span class="s1">&#39;view options&#39;</span><span class="p">,</span> <span class="nv">layout: </span><span class="kc">false</span>
+
+  <span class="nx">server</span><span class="p">.</span><span class="nx">get</span> <span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="nf">(req, res) -&gt;</span>
+    <span class="nx">res</span><span class="p">.</span><span class="nx">render</span> <span class="s1">&#39;index.jade&#39;</span>
+
+  <span class="nx">server</span><span class="p">.</span><span class="nx">post</span> <span class="s1">&#39;/upload&#39;</span><span class="p">,</span> <span class="nf">(req, res) -&gt;</span>
+    <span class="k">if</span> <span class="nx">req</span><span class="p">.</span><span class="nx">form</span>
+      <span class="nx">req</span><span class="p">.</span><span class="nx">form</span><span class="p">.</span><span class="nx">complete</span> <span class="nf">(err, fields, files) -&gt;</span>
+        <span class="nx">split</span> <span class="nx">fields</span><span class="p">,</span> <span class="nx">files</span>
+    <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span> <span class="s1">&#39;/status&#39;</span>
+
+  <span class="nx">server</span><span class="p">.</span><span class="nx">post</span> <span class="s1">&#39;/categorize&#39;</span><span class="p">,</span> <span class="nf">(req, res) -&gt;</span>
+    <span class="k">if</span> <span class="nx">req</span><span class="p">.</span><span class="nx">form</span>
+      <span class="nx">req</span><span class="p">.</span><span class="nx">form</span><span class="p">.</span><span class="nx">complete</span> <span class="nf">(err, fields) -&gt;</span>
+        <span class="nv">category = </span><span class="nx">fields</span><span class="p">[</span><span class="s1">&#39;categorize[content]&#39;</span><span class="p">]</span>
+        <span class="nv">task_id = </span><span class="nx">fields</span><span class="p">[</span><span class="s1">&#39;categorize[task_id]&#39;</span><span class="p">]</span>
+        <span class="nv">segment_id = </span><span class="nx">fields</span><span class="p">[</span><span class="s1">&#39;categorize[segment_id]&#39;</span><span class="p">]</span>
+        <span class="nx">Segment</span><span class="p">.</span><span class="nx">findById</span> <span class="nx">segment_id</span><span class="p">,</span> <span class="nf">(err, segment) -&gt;</span>
+          <span class="nv">segment.mode = </span><span class="nx">category</span>
+          <span class="nx">segment</span><span class="p">.</span><span class="nx">save</span> <span class="nx">dbchecker</span>
+          <span class="nx">create_transcribe_task</span> <span class="nx">segment</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>post answer to dormouse</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">dormouse</span><span class="p">.</span><span class="nx">answerTask</span> <span class="nx">task_id</span><span class="p">,</span> <span class="p">{</span> <span class="nv">mode: </span><span class="nx">category</span> <span class="p">},</span> <span class="nf">(err, r) -&gt;</span>
+          <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">r</span> <span class="c1"># DEBUG</span>
+          <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Error answering categorize dormouse task&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="nx">err</span>
+        <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span> <span class="s2">&quot;/?exclude=#{segment_id}&quot;</span>
+    <span class="k">else</span>
+      <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span> <span class="s1">&#39;/&#39;</span>
+
+  <span class="nx">server</span><span class="p">.</span><span class="nx">post</span> <span class="s1">&#39;/transcribe&#39;</span><span class="p">,</span> <span class="nf">(req, res) -&gt;</span>
+    <span class="k">if</span> <span class="nx">req</span><span class="p">.</span><span class="nx">form</span>
+      <span class="nx">req</span><span class="p">.</span><span class="nx">form</span><span class="p">.</span><span class="nx">complete</span> <span class="nf">(err, fields) -&gt;</span>
+        <span class="nv">transcription = </span><span class="nx">fields</span><span class="p">[</span><span class="s1">&#39;transcribe[content]&#39;</span><span class="p">]</span>
+        <span class="nv">task_id = </span><span class="nx">fields</span><span class="p">[</span><span class="s1">&#39;transcribe[task_id]&#39;</span><span class="p">]</span>
+        <span class="nv">segment_id = </span><span class="nx">fields</span><span class="p">[</span><span class="s1">&#39;transcribe[segment_id]&#39;</span><span class="p">]</span>
+        <span class="nv">q = </span><span class="nx">Segment</span><span class="p">.</span><span class="nx">update</span> <span class="p">{</span> <span class="s1">&#39;_id&#39;</span><span class="o">:</span> <span class="nx">segment_id</span> <span class="p">},</span> <span class="p">{</span> <span class="nv">transcription: </span><span class="nx">transcription</span><span class="p">,</span> <span class="nv">completed: </span><span class="kc">true</span> <span class="p">}</span>
+        <span class="nx">q</span><span class="p">.</span><span class="nx">run</span> <span class="s1">&#39;update&#39;</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>post answer to dormouse</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">dormouse</span><span class="p">.</span><span class="nx">answerTask</span> <span class="nx">task_id</span><span class="p">,</span> <span class="p">{</span> <span class="nv">transcription: </span><span class="nx">transcription</span> <span class="p">},</span> <span class="nf">(err, r) -&gt;</span>
+          <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">r</span> <span class="c1"># DEBUG</span>
+          <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Error answering transcribe dormouse task&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="nx">err</span>
+        <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span> <span class="s2">&quot;/?exclude=#{segment_id}&quot;</span>
+    <span class="k">else</span>
+      <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span> <span class="s1">&#39;/&#39;</span>
+
+  <span class="nx">server</span><span class="p">.</span><span class="nx">get</span> <span class="s1">&#39;/status&#39;</span><span class="p">,</span> <span class="nf">(req, res) -&gt;</span>
+    <span class="nx">Segment</span><span class="p">.</span><span class="nx">find</span> <span class="nf">(err, segments) -&gt;</span>
+      <span class="nx">Journal</span><span class="p">.</span><span class="nx">find</span> <span class="nf">(err, journals) -&gt;</span>
+        <span class="nv">context = </span><span class="nx">journals</span><span class="p">.</span><span class="nx">map</span> <span class="nf">(journal) -&gt;</span>
+          <span class="nv">j = </span><span class="p">{}</span>
+          <span class="nv">j.title = </span><span class="nx">journal</span><span class="p">.</span><span class="nx">title</span>
+          <span class="nv">j._id = </span><span class="nx">journal</span><span class="p">.</span><span class="nx">_id</span>
+          <span class="nv">j.segments = </span><span class="nx">segments</span><span class="p">.</span><span class="nx">filter</span> <span class="nf">(s) -&gt;</span>
+            <span class="nb">String</span><span class="p">(</span><span class="nx">journal</span><span class="p">.</span><span class="nx">_id</span><span class="p">)</span> <span class="o">is</span> <span class="nb">String</span><span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nx">journal_id</span><span class="p">)</span>
+          <span class="nv">j.completed = </span><span class="nx">journal</span><span class="p">.</span><span class="nx">completed</span> <span class="o">||</span> <span class="nx">segments</span><span class="p">.</span><span class="nx">every</span> <span class="nf">(s) -&gt;</span>
+            <span class="nx">s</span><span class="p">.</span><span class="nx">completed</span>
+          <span class="nx">j</span>
+        <span class="nx">res</span><span class="p">.</span><span class="nx">render</span> <span class="s1">&#39;status.jade&#39;</span><span class="p">,</span> <span class="nv">journals: </span><span class="nx">context</span>
+
+  <span class="nx">server</span><span class="p">.</span><span class="nx">get</span> <span class="s1">&#39;/complete&#39;</span><span class="p">,</span> <span class="nf">(req, res) -&gt;</span>
+    <span class="nv">p = </span><span class="nx">url</span><span class="p">.</span><span class="nx">parse</span> <span class="nx">req</span><span class="p">.</span><span class="nx">url</span><span class="p">,</span> <span class="kc">true</span>
+    <span class="k">if</span> <span class="nx">p</span><span class="p">.</span><span class="nx">query</span><span class="p">[</span><span class="s1">&#39;journal_id&#39;</span><span class="p">]</span><span class="o">?</span>
+      <span class="nx">Journal</span><span class="p">.</span><span class="nx">findById</span> <span class="nx">p</span><span class="p">.</span><span class="nx">query</span><span class="p">[</span><span class="s1">&#39;journal_id&#39;</span><span class="p">],</span> <span class="nf">(err, journal) -&gt;</span>
+        <span class="k">if</span> <span class="nx">journal</span><span class="p">.</span><span class="nx">completed</span>
+          <span class="nx">res</span><span class="p">.</span><span class="nx">render</span> <span class="s1">&#39;complete.jade&#39;</span><span class="p">,</span> <span class="nv">journal: </span><span class="nx">journal</span>
+        <span class="k">else</span>
+          <span class="nx">join</span> <span class="nx">journal</span><span class="p">,</span> <span class="nf">(output) -&gt;</span>
+            <span class="k">if</span> <span class="nx">output</span><span class="p">.</span><span class="nx">transcribed</span><span class="o">?</span> <span class="o">and</span> <span class="nx">output</span><span class="p">.</span><span class="nx">searchable</span><span class="o">?</span>
+              <span class="nv">journal.completed = </span><span class="kc">true</span>
+              <span class="nv">journal.transcribed = </span><span class="nx">utils</span><span class="p">.</span><span class="nx">fsPathToUrl</span> <span class="nx">output</span><span class="p">.</span><span class="nx">transcribed</span>
+              <span class="nv">journal.searchable = </span><span class="nx">utils</span><span class="p">.</span><span class="nx">fsPathToUrl</span> <span class="nx">output</span><span class="p">.</span><span class="nx">searchable</span>
+              <span class="nx">journal</span><span class="p">.</span><span class="nx">save</span> <span class="nf">(err) -&gt;</span>
+                <span class="nx">res</span><span class="p">.</span><span class="nx">render</span> <span class="s1">&#39;complete.jade&#39;</span><span class="p">,</span> <span class="nv">journal: </span><span class="nx">journal</span>
+            <span class="k">else</span>
+              <span class="nx">res</span><span class="p">.</span><span class="nx">render</span> <span class="s1">&#39;complete.jade&#39;</span><span class="p">,</span> <span class="nv">journal: </span><span class="kc">false</span>
+    <span class="k">else</span>
+      <span class="nx">res</span><span class="p">.</span><span class="nx">render</span> <span class="s1">&#39;complete.jade&#39;</span><span class="p">,</span> <span class="nv">journal: </span><span class="kc">false</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>-- helper functions</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">split = </span><span class="nf">(fields, files) -&gt;</span>
+  <span class="nv">uploaded = </span><span class="nx">files</span><span class="p">[</span><span class="s1">&#39;upload[file]&#39;</span><span class="p">]</span>
+  <span class="k">if</span> <span class="nx">uploaded</span><span class="p">.</span><span class="nx">type</span> <span class="o">isnt</span> <span class="s1">&#39;application/pdf&#39;</span>
+    <span class="k">return</span> <span class="nx">fs</span><span class="p">.</span><span class="nx">unlink</span> <span class="nx">uploaded</span><span class="p">.</span><span class="nx">path</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>-- save Journal to db</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">journal = </span><span class="k">new</span> <span class="nx">Journal</span>
+    <span class="nv">title: </span><span class="nx">fields</span><span class="p">[</span><span class="s1">&#39;upload[title]&#39;</span><span class="p">]</span>
+    <span class="nv">file_path: </span><span class="nx">uploaded</span><span class="p">.</span><span class="nx">path</span>
+  <span class="nx">journal</span><span class="p">.</span><span class="nx">save</span> <span class="nx">dbchecker</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <p>-- divide into segments</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nx">json_spawn</span> <span class="s1">&#39;python&#39;</span><span class="p">,</span> <span class="p">[</span> <span class="s1">&#39;pdeff/split.py&#39;</span> <span class="p">],</span> <span class="nx">journal</span><span class="p">.</span><span class="nx">file_path</span><span class="p">,</span> <span class="p">[],</span> <span class="nx">save_segments_to_db</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">journal</span><span class="p">)</span>
+
+<span class="nv">save_segments_to_db = </span><span class="nf">(journal, segments) -&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <p>-- save Segments to db</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nx">segments</span><span class="p">.</span><span class="nx">forEach</span> <span class="nf">(seg, i) -&gt;</span>
+    <span class="nv">segment = </span><span class="k">new</span> <span class="nx">Segment</span>
+      <span class="nv">file_path: </span><span class="nx">seg</span><span class="p">.</span><span class="nx">location</span>
+      <span class="nv">url: </span><span class="nx">utils</span><span class="p">.</span><span class="nx">fsPathToUrl</span> <span class="nx">seg</span><span class="p">.</span><span class="nx">location</span>
+      <span class="nv">page: </span><span class="nx">seg</span><span class="p">.</span><span class="nx">page</span>
+      <span class="nv">layout_order: </span><span class="nx">i</span>
+      <span class="nv">journal_id: </span><span class="nx">journal</span><span class="p">.</span><span class="nx">_id</span>
+    <span class="nx">segment</span><span class="p">.</span><span class="nx">save</span> <span class="nf">(err, saved) -&gt;</span>
+      <span class="nx">create_categorize_task</span> <span class="nx">saved</span>
+
+<span class="nv">create_categorize_task = </span><span class="nf">(segment) -&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-9">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-9">&#182;</a>               </div>               <p>-- create dormouse task for segment</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">task_info =</span>
+    <span class="nv">name: </span><span class="s2">&quot;categorize #{segment._id}&quot;</span>
+    <span class="nv">project_id: </span><span class="nx">dormouse</span><span class="p">.</span><span class="nx">project_id</span>
+    <span class="nv">template_id: </span><span class="mi">14</span> <span class="c1"># zahanm/categorize.template</span>
+    <span class="nv">parameters:</span>
+      <span class="nv">segment_url: </span><span class="nx">segment</span><span class="p">.</span><span class="nx">url</span>
+      <span class="nv">segment_id: </span><span class="nx">segment</span><span class="p">.</span><span class="nx">_id</span>
+  <span class="nx">dormouse</span><span class="p">.</span><span class="nx">createTask</span> <span class="nx">task_info</span><span class="p">,</span> <span class="nf">(err, r) -&gt;</span>
+    <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Error creating categorize dormouse task&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="nx">err</span>
+
+<span class="nv">create_transcribe_task = </span><span class="nf">(segment) -&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-10">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-10">&#182;</a>               </div>               <p>-- create dormouse task for segment</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">task_info =</span>
+    <span class="nv">name: </span><span class="s2">&quot;transcribe #{segment._id}&quot;</span>
+    <span class="nv">project_id: </span><span class="nx">dormouse</span><span class="p">.</span><span class="nx">project_id</span>
+    <span class="nv">template_id: </span><span class="mi">13</span> <span class="c1"># zahanm/transcribe.template</span>
+    <span class="nv">parameters:</span>
+      <span class="nv">segment_url: </span><span class="nx">segment</span><span class="p">.</span><span class="nx">url</span>
+      <span class="nv">mode: </span><span class="nx">segment</span><span class="p">.</span><span class="nx">mode</span>
+      <span class="nv">segment_id: </span><span class="nx">segment</span><span class="p">.</span><span class="nx">_id</span>
+  <span class="nx">dormouse</span><span class="p">.</span><span class="nx">createTask</span> <span class="nx">task_info</span><span class="p">,</span> <span class="nf">(err, r) -&gt;</span>
+    <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Error creating transcribe dormouse task&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="nx">err</span>
+
+<span class="nv">join = </span><span class="nf">(journal, cb) -&gt;</span>
+  <span class="nx">Segment</span><span class="p">.</span><span class="nx">find</span> <span class="p">{</span> <span class="nv">journal_id: </span><span class="nx">journal</span><span class="p">.</span><span class="nx">_id</span> <span class="p">},</span> <span class="p">[],</span> <span class="p">{</span> <span class="nv">sort: </span><span class="s1">&#39;layout_order&#39;</span> <span class="p">},</span> <span class="nf">(err, segments) -&gt;</span>
+    <span class="nv">incompleted = </span><span class="nx">segments</span><span class="p">.</span><span class="nx">some</span> <span class="nf">(s) -&gt;</span>
+      <span class="o">not</span> <span class="nx">s</span><span class="p">.</span><span class="nx">completed</span>
+    <span class="k">if</span> <span class="nx">incompleted</span>
+      <span class="nx">cb</span> <span class="p">{}</span>
+    <span class="nv">input = </span><span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span> <span class="nx">segments</span><span class="p">.</span><span class="nx">map</span> <span class="nf">(s) -&gt;</span>
+      <span class="nv">page: </span><span class="nx">s</span><span class="p">.</span><span class="nx">page</span>
+      <span class="nv">location: </span><span class="nx">s</span><span class="p">.</span><span class="nx">file_path</span>
+      <span class="nv">transcription: </span><span class="nx">s</span><span class="p">.</span><span class="nx">transcription</span>
+      <span class="nv">type: </span><span class="nx">s</span><span class="p">.</span><span class="nx">mode</span>
+    <span class="nx">json_spawn</span> <span class="s1">&#39;python&#39;</span><span class="p">,</span> <span class="p">[</span> <span class="s1">&#39;pdeff/join.py&#39;</span> <span class="p">],</span> <span class="nx">input</span><span class="p">,</span> <span class="p">{},</span> <span class="nx">cb</span>
+
+<span class="nv">json_spawn = </span><span class="nf">(command, args, input, def, cb) -&gt;</span>
+  <span class="nv">child = </span><span class="nx">spawn</span> <span class="nx">command</span><span class="p">,</span> <span class="nx">args</span>
+  <span class="nv">output = </span><span class="s1">&#39;&#39;</span>
+  <span class="nx">child</span><span class="p">.</span><span class="nx">stdout</span><span class="p">.</span><span class="kc">on</span> <span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="nf">(buffer) -&gt;</span>
+    <span class="nx">output</span> <span class="o">+=</span> <span class="nx">buffer</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span>
+  <span class="nx">child</span><span class="p">.</span><span class="nx">stderr</span><span class="p">.</span><span class="kc">on</span> <span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="nf">(buffer) -&gt;</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">error</span> <span class="nx">buffer</span><span class="p">.</span><span class="nx">toString</span><span class="p">().</span><span class="nx">trim</span><span class="p">()</span>
+  <span class="nx">child</span><span class="p">.</span><span class="kc">on</span> <span class="s1">&#39;exit&#39;</span><span class="p">,</span> <span class="nf">(code) -&gt;</span>
+    <span class="nx">cb</span> <span class="nx">def</span> <span class="k">if</span> <span class="nx">code</span> <span class="o">isnt</span> <span class="mi">0</span>
+    <span class="k">try</span>
+      <span class="nx">cb</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span> <span class="nx">output</span>
+    <span class="k">catch</span> <span class="nx">err</span>
+      <span class="nx">cb</span> <span class="nx">def</span>
+  <span class="nx">child</span><span class="p">.</span><span class="nx">stdin</span><span class="p">.</span><span class="nx">write</span> <span class="nx">input</span>
+  <span class="nx">child</span><span class="p">.</span><span class="nx">stdin</span><span class="p">.</span><span class="nx">end</span><span class="p">()</span>
+  <span class="kc">true</span>
+
+<span class="nv">dbchecker = </span><span class="nf">(err, doc) -&gt;</span>
+  <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span> <span class="s1">&#39;Error saving #{doc} to db&#39;</span> <span class="k">if</span> <span class="nx">err</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

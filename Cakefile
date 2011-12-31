@@ -28,6 +28,15 @@ task 'clean', 'clean up assembled and built js', (options) ->
     if '.js' is path.extname file
       fs.unlinkSync path.join jslib, file
 
+task 'docs', 'build docs for .coffee files using docco', (options) ->
+  docco = spawn "docco #{coffeelib}/*.coffee"
+  docco.stdout.on 'data', (data) ->
+    console.log data.toString().trim()
+  docco.stderr.on 'data', (data) ->
+    console.log data.toString().trim()
+  docco.on 'exit', (code, signal) ->
+    process.exit code
+
 #--- helper functions
 
 compile_files = (watch, cb) ->
