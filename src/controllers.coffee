@@ -103,7 +103,7 @@ split = (fields, files) ->
     file_path: uploaded.path
   journal.save dbchecker
   # -- divide into segments
-  json_spawn 'python', [ 'pdeff/split.py' ], journal.file_path, [], save_segments_to_db.bind(this, journal)
+  json_spawn './py_packages/bin/python', [ 'pdeff/split.py' ], journal.file_path, [], save_segments_to_db.bind(this, journal)
 
 save_segments_to_db = (journal, segments) ->
   # -- save Segments to db
@@ -153,7 +153,7 @@ join = (journal, cb) ->
       location: s.file_path
       transcription: s.transcription
       type: s.mode
-    json_spawn 'python', [ 'pdeff/join.py' ], input, {}, cb
+    json_spawn './py_packages/bin/python', [ 'pdeff/join.py' ], input, {}, cb
 
 json_spawn = (command, args, input, def, cb) ->
   child = spawn command, args
