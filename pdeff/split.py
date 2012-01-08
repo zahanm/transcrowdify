@@ -23,6 +23,8 @@ journal pdf file name
 
 SEGMENTS_PER_PAGE = 6
 
+#### Pages
+
 def split_pages(pdf_fname):
   out_fnames = []
   with open(pdf_fname, 'rb') as inp_file:
@@ -46,6 +48,8 @@ def convert_pages(page_fnames):
       raise RuntimeError('Error while converting pdf to png')
     yield png_file.name
 
+#### Sections in a page
+
 def divide_page(page_num, page_fname):
   page = Image.open(page_fname)
   page_width, page_height = page.size
@@ -62,6 +66,8 @@ def divide_page(page_num, page_fname):
     upper += segment_height
     lower += segment_height
 
+#### The entire pdf, util
+
 def split_pdf(pdf_fname):
   output = []
   page_fnames = split_pages(pdf_fname)
@@ -74,6 +80,8 @@ def cleanup_last_run():
   file_globs = ['tmp/*.pdf', 'tmp/*.png', 'tmp/*.tex', 'tmp/*.aux', 'tmp/*.log']
   for fg in file_globs:
     map(lambda f: os.unlink(f), glob(fg))
+
+#### Initialize
 
 if __name__ == '__main__':
   if len(sys.argv) == 1:
