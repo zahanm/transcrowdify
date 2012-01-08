@@ -50,6 +50,22 @@ def convert_pages(page_fnames):
 
 #### Sections in a page
 
+# Two approaches
+# - Automagically:
+#   Find an acceptable noise level for blank sections of page.
+#   Identify bands of blank section.
+#   Choose blank sections that get divisions close to desired number per page
+#   Pick a line each that is close to middle of chosen section
+#   Divide on those lines
+# - Using human input:
+#   Perhaps identify dividing lines in automagic first pass
+#   Create task for human that presents page with set number of dividers
+#   Human drags divders to desired locations
+#   Optionally human also designates sections as math or text
+
+def optimal_divider():
+  pass
+
 def divide_page(page_num, page_fname):
   page = Image.open(page_fname)
   page_width, page_height = page.size
