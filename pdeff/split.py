@@ -63,6 +63,20 @@ def convert_pages(page_fnames):
 #   Human drags divders to desired locations
 #   Optionally human also designates sections as math or text
 
+def line_histogram(im):
+  pixdata = im.load()
+  width, height = im.size
+  def liner(h):
+    intensity = 0
+    for w in xrange(width):
+      intensity += sum(pixdata[w,h][:3])
+    return intensity
+  line_hist = map(liner, xrange(height))
+  return line_hist
+
+def white_intensity():
+  pass
+
 def optimal_divider():
   pass
 
