@@ -13,6 +13,8 @@ import Image
 
 from pyPdf import PdfFileWriter, PdfFileReader
 
+from utils import bottomk_pos
+
 '''
 Module to split pdf file into segments
 dependencies: imagemagick, pyPdf, Python Image Lib
@@ -20,8 +22,6 @@ dependencies: imagemagick, pyPdf, Python Image Lib
 expect input on stdin:
 journal pdf file name
 '''
-
-SEGMENTS_PER_PAGE = 6
 
 #### Pages
 
@@ -63,6 +63,9 @@ def convert_pages(page_fnames):
 #   Human drags divders to desired locations
 #   Optionally human also designates sections as math or text
 
+SEGMENTS_PER_PAGE = 6
+DIVIDER_CANDIDATES = 50
+
 def line_histogram(im):
   pixdata = im.load()
   width, height = im.size
@@ -74,11 +77,25 @@ def line_histogram(im):
   line_hist = map(liner, xrange(height))
   return line_hist
 
-def white_intensity():
-  pass
-
-def optimal_divider():
-  pass
+def optimal_dividers(im):
+  hist = line_histogram(im)
+  candidates = bottomk_pos(hist, DIVIDER_CANDIDATES)
+  width, height = im.size
+  optimal = map(lambda i: (i+1) * (height / SEGMENTS_PER_PAGE), range(SEGMENTS_PER_PAGE)[:-1])
+  def closest_pos(l, item):
+    close = 0
+    dist = abs(l[close] - item)
+    for pos, v in enumerate(l):
+      diff = abs(v - item)
+      if diff < dist:
+        dist = diff
+        close = pos
+    return close
+  for pos, d in enumerate(optimal):
+    p = closest_pos(candidates, d)
+    optimal[pos] = candidates[p]
+    del candidates[p]
+  return optimal
 
 def divide_page(page_num, page_fname):
   page = Image.open(page_fname)
