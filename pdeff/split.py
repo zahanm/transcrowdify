@@ -64,7 +64,7 @@ def convert_pages(page_fnames):
 #   Optionally human also designates sections as math or text
 
 SEGMENTS_PER_PAGE = 6
-DIVIDER_CANDIDATES = 50
+DIVIDER_CANDIDATES = 150
 
 def line_histogram(im):
   pixdata = im.load()
