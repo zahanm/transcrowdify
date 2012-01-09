@@ -1,5 +1,5 @@
 
-from heapq import nsmallest
+from heapq import nlargest
 
 def strip_extra_whitespace(s):
   o = []
@@ -12,6 +12,6 @@ def strip_extra_whitespace(s):
 # Uses a min-heap
 # returns list of tuples `[ ... (pos, val) ... ]`
 # returns positions of bottomk
-def bottomk_pos(l, k):
-  pos_val = nsmallest(k, enumerate(l), lambda i: i[1])
+def topk_pos(l, k):
+  pos_val = nlargest(k, enumerate(l), lambda i: i[1])
   return map(lambda i: i[0], pos_val)

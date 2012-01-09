@@ -13,7 +13,7 @@ import Image
 
 from pyPdf import PdfFileWriter, PdfFileReader
 
-from utils import bottomk_pos
+from utils import topk_pos
 
 '''
 Module to split pdf file into segments
@@ -79,7 +79,7 @@ def line_histogram(im):
 
 def optimal_dividers(im):
   hist = line_histogram(im)
-  candidates = bottomk_pos(hist, DIVIDER_CANDIDATES)
+  candidates = topk_pos(hist, DIVIDER_CANDIDATES)
   width, height = im.size
   optimal = map(lambda i: (i+1) * (height / SEGMENTS_PER_PAGE), range(SEGMENTS_PER_PAGE)[:-1])
   def closest_pos(l, item):
