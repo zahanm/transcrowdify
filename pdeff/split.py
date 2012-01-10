@@ -105,9 +105,9 @@ def divide_page(page_num, page_fname):
   segment_fname_template = path.join(path.abspath('./static/images/'), base_name)
   left, right = 0, width
   optimal = optimal_dividers(page)
-  optimal.append(page_height)
-  for top, bottom in itertools.izip(optimal[:-1], optimal[1:]):
-    segment_fname = segment_fname_template.format(segment_num)
+  optimal = [0] + optimal + [height]
+  for i, (top, bottom) in enumerate(itertools.izip(optimal[:-1], optimal[1:])):
+    segment_fname = segment_fname_template.format(i)
     segment = page.copy()
     segment = segment.crop((left, top, right, bottom))
     segment.save(segment_fname)
