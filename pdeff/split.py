@@ -5,6 +5,7 @@ import sys
 import os
 import os.path as path
 import json
+import itertools
 from subprocess import call
 from glob import glob
 from tempfile import NamedTemporaryFile
@@ -99,19 +100,18 @@ def optimal_dividers(im):
 
 def divide_page(page_num, page_fname):
   page = Image.open(page_fname)
-  page_width, page_height = page.size
-  segment_height = page_height / SEGMENTS_PER_PAGE
+  width, height = page.size
   base_name = path.splitext(path.basename(page_fname))[0] + '_{0}.png'
   segment_fname_template = path.join(path.abspath('./static/images/'), base_name)
-  left, upper, right, lower = 0, 0, page_width, segment_height
-  for segment_num in xrange(SEGMENTS_PER_PAGE):
+  left, right = 0, width
+  optimal = optimal_dividers(page)
+  optimal.append(page_height)
+  for top, bottom in itertools.izip(optimal[:-1], optimal[1:]):
     segment_fname = segment_fname_template.format(segment_num)
     segment = page.copy()
-    segment = segment.crop((left, upper, right, lower))
+    segment = segment.crop((left, top, right, bottom))
     segment.save(segment_fname)
     yield segment_fname
-    upper += segment_height
-    lower += segment_height
 
 #### The entire pdf, util
 
