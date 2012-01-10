@@ -45,6 +45,6 @@ dormouse.createTask task, (r) -> console.log JSON.parse r
 
 --
 
-dividing
+split
 
-scan through line by line looking for comparitively less intense parts
+look only in the region of a preferred split for least intense line

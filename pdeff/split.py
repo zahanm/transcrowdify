@@ -135,4 +135,4 @@ if __name__ == '__main__':
     cleanup_last_run()
     split_pdf(sys.stdin.read())
   else:
-    print('usage: python', __file__, '<input_pdf>')
+    print('usage: python', __file__, '| [input_pdf on stdio]')
