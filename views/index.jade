@@ -40,19 +40,16 @@ html(lang="en")
   body
     div#container.row
       div#hdr.column.grid_12
-        h1 Journal transcribing happening here
+        center
+          h2 Journal Transcription
       nav#sidebar.column.grid_3
-        ul
-          li
-            a(href="/status") Transcription Status
-      div#main.column.grid_9
-        div#task
-          center#loading
-            img(src="/images/loading.gif")
-          p#nothing
-            strong Nothing to transcribe currently, please upload a journal
+        center.text
+          p
+            a(href="/status") Status
         hr
-        form(action="/upload", enctype="multipart/form-data", method="post")
+        center.text
+          strong Upload
+        form.text(action="/upload", enctype="multipart/form-data", method="post")
           p
             label(for="upload[title]") Title
             input(type="text", placeholder="Journal title", id="upload[title]", name="upload[title]")
@@ -61,3 +58,9 @@ html(lang="en")
             input(type="file", id="upload[file]", name="upload[file]", accept="application/pdf")
           p
             input(type="submit", value="Upload")
+      div#main.column.grid_9
+        div#task.text
+          center#loading
+            img(src="/images/loading.gif")
+          p#nothing
+            strong Nothing to transcribe currently, please upload a journal

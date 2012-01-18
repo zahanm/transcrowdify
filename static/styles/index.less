@@ -1,4 +1,38 @@
 
+/* less variables */
+
+@light-blue:   hsl(190, 50%, 65%);
+@light-yellow: desaturate(#fefec8, 10%);
+@dark-yellow:  desaturate(darken(@light-yellow, 10%), 40%);
+@darkest:      hsl(20, 0%, 15%);
+@dark:         hsl(190, 20%, 30%);
+@medium:       hsl(10, 60%, 30%);
+@light:        hsl(90, 40%, 20%);
+@lightest:     hsl(90, 20%, 90%);
+@highlight:    hsl(80, 50%, 90%);
+@blue:         hsl(210, 60%, 20%);
+@alpha-blue:   hsla(210, 60%, 40%, 0.5);
+
+.box-shadow (@x, @y, @blur, @alpha) {
+  @value: @x @y @blur rgba(0, 0, 0, @alpha);
+  box-shadow:         @value;
+  -moz-box-shadow:    @value;
+  -webkit-box-shadow: @value;
+}
+
+.border-radius (@radius) {
+  border-radius: @radius;
+  -moz-border-radius: @radius;
+  -webkit-border-radius: @radius;
+}
+
+
+/* layout */
+
+ul {
+  list-style: none;
+}
+
 form p label {
   padding-right: 1em;
 }
@@ -10,4 +44,43 @@ form textarea {
 
 #nothing {
   display: none;
+}
+
+/* visual styles */
+
+body {
+  background-color: @light-blue;
+  font-family: 'Georgia', serif;
+}
+
+a {
+  color: inherit;
+}
+
+.text {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.greybox {
+  background-color: lighten(@light-blue, 25%);
+  color: @blue;
+  .box-shadow(0, 5px, 5px, 0.2);
+  .border-radius(2px);
+}
+
+#hdr {
+  background-color: @blue;
+  color: white;
+  margin-bottom: 10px;
+  .box-shadow(0, 5px, 5px, 0.2);
+  .border-radius(2px);
+}
+
+#sidebar {
+  .greybox;
+}
+
+#main {
+  .greybox;
 }
