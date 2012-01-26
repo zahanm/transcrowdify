@@ -9,18 +9,18 @@
   },
   "main": "lib/server.js",
   "engines": {
-    "node": "~0.4.12"
+    "node": "~0.6.6"
   },
   "dependencies": {
-    "express": "*",
-    "jade": "*",
-    "connect-form": "*",
-    "mongoose": "*",
+    "express": "~2.5.2",
+    "jade": "~0.20.0",
+    "connect-form": "~0.2.1",
+    "mongoose": "~2.4.8",
     "coffee-script": "~1.2.0",
     "dormouse": "0.0.1"
   },
   "devDependencies": {
-    "async": "*",
-    "docco": "*"
+    "async": "~0.1.15",
+    "docco": "~0.3.0"
    }
 }
