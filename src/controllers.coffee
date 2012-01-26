@@ -71,6 +71,7 @@ exports.configure = (server) ->
             s.completed
           j.progress = Math.ceil(s_completed.length / j.segments.length * 100)
           j.completed = journal.completed || (s_completed.length == j.segments.length)
+          j.email = journal.email
           j
         res.render 'status.jade', journals: context
 
