@@ -21,7 +21,13 @@ exports.configure = (server) ->
   server.post '/upload', (req, res) ->
     if req.form
       req.form.complete (err, fields, files) ->
-        split fields, files
+        uploaded = files['upload[file]']
+        options =
+          title: fields['upload[title]']
+          email: fields['upload[email]']
+          file_path: uploaded.path
+          file_type: uploaded.type
+        split options
     res.redirect '/status'
 
   server.post '/categorize', (req, res) ->
@@ -96,15 +102,14 @@ exports.configure = (server) ->
 
 # -- helper functions
 
-split = (fields, files) ->
-  uploaded = files['upload[file]']
-  if uploaded.type isnt 'application/pdf'
-    return fs.unlink uploaded.path
+split = (ops) ->
+  if ops.file_type isnt 'application/pdf'
+    return fs.unlink ops.file_path
   # -- save Journal to db
   journal = new Journal
-    title: fields['upload[title]']
-    email: fields['upload[email]']
-    file_path: uploaded.path
+    title: ops.title
+    email: ops.email
+    file_path: ops.file_path
   journal.save dbchecker
   # -- divide into segments
   json_spawn './py_packages/bin/python', [ 'pdeff/split.py' ], journal.file_path, [], save_segments_to_db.bind(this, journal)
