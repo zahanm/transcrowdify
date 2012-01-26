@@ -15,12 +15,14 @@ nodemailer.SMTP =
   user: project_email
   pass: project_pw
 
-exports.send_mail = (to, subject, body) ->
+# Takes in sending config of the form
+#
+# to: email
+# subject: string
+# body: plaintext body
+#
+exports.send_mail = (config) ->
   console.debug "Sending email to #{to}"
-  config =
-    sender: project_email
-    to: to
-    subject: subject
-    body: body
+  config.sender = project_email
   nodemailer.send_mail config, (err, success) ->
     console.debug 'Message ' + if success then 'sent' else 'failed'

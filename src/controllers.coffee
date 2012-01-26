@@ -54,8 +54,7 @@ exports.configure = (server) ->
         transcription = fields['transcribe[content]']
         task_id = fields['transcribe[task_id]']
         segment_id = fields['transcribe[segment_id]']
-        q = Segment.update { '_id': segment_id }, { transcription: transcription, completed: true }
-        q.run 'update'
+        record_transcription segment_id, transcription
         # post answer to dormouse
         dormouse.answerTask task_id, { transcription: transcription }, (err, r) ->
           console.log r # DEBUG
@@ -88,19 +87,48 @@ exports.configure = (server) ->
         if journal.completed
           res.render 'complete.jade', journal: journal
         else
-          join journal, (output) ->
-            if output.transcribed? and output.searchable?
-              journal.completed = true
-              journal.transcribed = utils.fsPathToUrl output.transcribed
-              journal.searchable = utils.fsPathToUrl output.searchable
-              journal.save (err) ->
-                res.render 'complete.jade', journal: journal
-            else
-              res.render 'complete.jade', journal: false
+          finalize_journal journal_id, (j) ->
+            res.render 'complete.jade', journal: j
     else
       res.render 'complete.jade', journal: false
 
 # -- helper functions
+
+record_transcription = (s_id, t) ->
+  Segment.findById s_id, (err, s) ->
+    s.transcription = t
+    s.completed = true
+    s.save (err) ->
+      Segment.find { 'journal_id': s.journal_id }, (err, ss) ->
+        alldone = ss.every (seg) ->
+          seg.completed
+        if alldone
+          finalize_journal seg.journal_id
+
+finalize_journal = (j_id, cb) ->
+  Journal.findById j_id, (err, journal) ->
+    join journal, (out) ->
+      if out.transcribed? and out.searchable?
+        journal.completed = true
+        journal.transcribed = utils.fsPathToUrl out.transcribed
+        journal.searchable = utils.fsPathToUrl out.searchable
+        journal.save (err) ->
+          notify_finalized journal
+          cb journal if cb
+
+notify_finalized = (journal) ->
+  config =
+    to: journal.email
+    subject: "You're journal transcription is complete!"
+    body:
+      """
+      You can access the searchable version of your journal at #{journal.searchable} .
+      The transcribed version can be found at #{journal.transcribed} .
+
+      Powered by http://dormou.se
+      """
+  email = require './email'
+  email.send_mail config
 
 split = (ops) ->
   if ops.file_type isnt 'application/pdf'
