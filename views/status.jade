@@ -4,8 +4,12 @@ html(lang="en")
     title Transcription Status
     link(rel="stylesheet/less", type="text/css", href="styles/base.less")
     link(rel="stylesheet/less", type="text/css", href="styles/status.less")
+    link(rel="stylesheet", type="text/css", href="styles/ui-progress-bar.css")
     script(type="text/javascript", src="/js/less.min.js")
     script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js")
+
+    :coffeescript
+      console.log 'hi'
 
   body
     div#container.row
@@ -17,16 +21,20 @@ html(lang="en")
           li
             a(href="/") Home
       div#main.column.grid_9
-        each journal in journals
-          h3.text= journal.title
-          if journal.completed
-            p.text Transcription complete
-            p.text The pdfs can be viewed <a href="/complete?journal_id=#{journal._id}">here</a>
-          else
-            p.text Transcription incomplete
-          ul.segments
-            each s in journal.segments
-              if s.completed
-                li <a href="#{s.url}">Segment #{s._id}</a> on page #{s.page} of type #{s.mode} is complete
-              else
-                li <a href="#{s.url}">Segment #{s._id}</a> on page #{s.page} of type #{s.mode} is pending
+        div.text
+          each journal in journals
+            h3= journal.title
+            div.ui-progress-bar.ui-container
+              div.ui-progress(style="width: #{journal.progress}%")
+                span.ui-label Completed <b class="value">#{journal.progress}%</b>
+            if journal.completed
+              p Transcription complete
+              p The pdfs can be viewed <a href="/complete?journal_id=#{journal._id}">here</a>
+            else
+              p Transcription incomplete
+            ul.segments
+              each s in journal.segments
+                if s.completed
+                  li <a href="#{s.url}">Segment #{s._id}</a> on page #{s.page + 1} of type #{s.mode} is complete
+                else
+                  li <a href="#{s.url}">Segment #{s._id}</a> on page #{s.page + 1} is pending

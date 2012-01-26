@@ -67,8 +67,10 @@ exports.configure = (server) ->
           j._id = journal._id
           j.segments = segments.filter (s) ->
             String(journal._id) is String(s.journal_id)
-          j.completed = journal.completed || segments.every (s) ->
+          s_completed = segments.filter (s) ->
             s.completed
+          j.progress = Math.ceil(s_completed.length / j.segments.length * 100)
+          j.completed = journal.completed || (s_completed.length == j.segments.length)
           j
         res.render 'status.jade', journals: context
 
