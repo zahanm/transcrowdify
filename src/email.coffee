@@ -1,6 +1,11 @@
 
+fs = require 'fs'
 nodemailer = require 'nodemailer'
 ImapConnection = require('imap').ImapConnection
+MailParser = require("mailparser").MailParser
+
+controllers = require './controllers'
+utils = require './utils'
 
 project_email = 'journal@dormou.se'
 project_pw = '12qwas12'
@@ -43,13 +48,37 @@ cmds = [
     imap.logout next
 ]
 
+mailparser = new MailParser
+  streamAttachments: true
+
+mailparser.on 'attachment', (attachment) ->
+  fname = utils.normedPathJoin __dirname, '../uploads/', attachment.generatedFileName
+  output = fs.createWriteStream fname
+  attachment.stream.pipe output
+
+allowed_types = [ 'application/pdf' ]
+
+mailparser.on 'end', (mail) ->
+  attachment = null
+  for a in mail.attachments
+    if a.contentType in allowed_types
+      attachment = a
+  if attachment
+    fname = utils.normedPathJoin __dirname, '../uploads/', attachment.generatedFileName
+    options =
+      title: mail.subject
+      email: mail.from[0].address
+      file_path: fname
+      file_type: attachment.contentType
+    console.log 'Splitting the journal'
+    controllers.split options
+
 get_message = (msg) ->
   console.log 'We have a new email!'
-  raw_body = ''
   msg.on 'data', (chunk) ->
-    raw_body += chunk
+    mailparser.write chunk
   msg.on 'end', ->
-    console.log raw_body
+    mailparser.end()
 
 exports.check_mail = ->
   console.log 'Checking email'

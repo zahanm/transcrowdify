@@ -147,6 +147,8 @@ split = (ops) ->
   # -- divide into segments
   json_spawn './py_packages/bin/python', [ 'pdeff/split.py' ], journal.file_path, [], save_segments_to_db.bind(this, journal)
 
+exports.split = split
+
 save_segments_to_db = (journal, segments) ->
   # -- save Segments to db
   segments.forEach (seg, i) ->
