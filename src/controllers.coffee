@@ -100,6 +100,7 @@ split = (fields, files) ->
   # -- save Journal to db
   journal = new Journal
     title: fields['upload[title]']
+    email: fields['upload[email]']
     file_path: uploaded.path
   journal.save dbchecker
   # -- divide into segments

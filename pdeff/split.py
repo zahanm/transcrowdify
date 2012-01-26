@@ -133,6 +133,6 @@ def cleanup_last_run():
 if __name__ == '__main__':
   if len(sys.argv) == 1:
     cleanup_last_run()
-    split_pdf(sys.stdin.read())
+    split_pdf(sys.stdin.read().strip())
   else:
     print('usage: python', __file__, '| [input_pdf on stdio]')

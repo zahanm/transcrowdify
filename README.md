@@ -17,3 +17,5 @@ Powered by [Dormouse](http://dormou.se).
   - ghostscript
   - LaTeX
 
+Needed:
+sudo apt-get install libjpeg8-dev
