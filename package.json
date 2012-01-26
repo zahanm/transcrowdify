@@ -16,10 +16,10 @@
     "jade": "*",
     "connect-form": "*",
     "mongoose": "*",
+    "coffee-script": "~1.2.0",
     "dormouse": "0.0.1"
   },
   "devDependencies": {
-    "coffee-script": "*",
     "async": "*",
     "docco": "*"
    }
