@@ -18,6 +18,11 @@ exports.configure = (server) ->
   server.get '/', (req, res) ->
     res.render 'index.jade'
 
+  server.get '/testemail', (req, res) ->
+    email = require './email'
+    email.check_mail()
+    res.end 'Fetching email'
+
   server.post '/upload', (req, res) ->
     if req.form
       req.form.complete (err, fields, files) ->
@@ -28,7 +33,7 @@ exports.configure = (server) ->
           file_path: uploaded.path
           file_type: uploaded.type
         split options
-    res.redirect '/status'
+    res.redirect '/'
 
   server.post '/categorize', (req, res) ->
     if req.form
