@@ -123,7 +123,7 @@ create_categorize_task = (segment) ->
   task_info =
     name: "categorize #{segment._id}"
     project_id: dormouse.project_id
-    template_id: 14 # zahanm/categorize.template
+    template_id: 2 # zahanm/categorize.template
     parameters:
       segment_url: segment.url
       segment_id: segment._id
@@ -135,7 +135,7 @@ create_transcribe_task = (segment) ->
   task_info =
     name: "transcribe #{segment._id}"
     project_id: dormouse.project_id
-    template_id: 13 # zahanm/transcribe.template
+    template_id: 1 # zahanm/transcribe.template
     parameters:
       segment_url: segment.url
       mode: segment.mode

@@ -19,3 +19,4 @@ Powered by [Dormouse](http://dormou.se).
 
 Needed:
 sudo apt-get install libjpeg8-dev
+change project and template_id in two places, clientside code and serverside

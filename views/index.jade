@@ -12,10 +12,10 @@ html(lang="en")
       $dm.server 'http://arya.stanford.edu:3777'
       $dm.api_key 'f5d20b8caffe16deb8143a520c38ed2b23fd9def' # XXX should not be used
       $dm.user = 'zahanm' # XXX should only be retrievable - set remotely
-      $dm.project_id = 21 # transcrowdify
+      $dm.project_id = 1 # transcrowdify
       template_urls =
-        13: '/templates/transcribe.html' # zahanm/transcribe.template
-        14: '/templates/categorize.html' # zahanm/categorize.template
+        1: '/templates/transcribe.html' # zahanm/transcribe.template
+        2: '/templates/categorize.html' # zahanm/categorize.template
       $(document).ready ->
         q = $dm.getTasks()
         q.eq 'project_id', $dm.project_id
