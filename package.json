@@ -17,6 +17,7 @@
     "connect-form": "~0.2.1",
     "mongoose": "~2.4.8",
     "coffee-script": "~1.2.0",
+    "nodemailer": "~0.2.4",
     "dormouse": "0.0.1"
   },
   "devDependencies": {
