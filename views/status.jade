@@ -3,25 +3,27 @@ html(lang="en")
   head
     title Transcription Status
     link(rel="stylesheet/less", type="text/css", href="styles/base.less")
+    link(rel="stylesheet/less", type="text/css", href="styles/status.less")
     script(type="text/javascript", src="/js/less.min.js")
-    // script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js")
+    script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js")
 
   body
     div#container.row
       div#hdr.column.grid_12
-        h1 Journal transcribing status
+        center
+          h1 Status of Transcriptions
       nav#sidebar.column.grid_3
-        ul
+        ul.text
           li
             a(href="/") Home
       div#main.column.grid_9
         each journal in journals
-          h3= journal.title
+          h3.text= journal.title
           if journal.completed
-            p Transcription complete
-            p The pdfs can be viewed <a href="/complete?journal_id=#{journal._id}">here</a>
+            p.text Transcription complete
+            p.text The pdfs can be viewed <a href="/complete?journal_id=#{journal._id}">here</a>
           else
-            p Transcription incomplete
+            p.text Transcription incomplete
           ul.segments
             each s in journal.segments
               if s.completed
