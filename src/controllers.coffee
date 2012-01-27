@@ -48,6 +48,7 @@ exports.configure = (server) ->
         # post answer to dormouse
         dormouse.answerTask task_id, { mode: category }, (err, r) ->
           console.log r # DEBUG
+          console.log err # DEBUG
           throw new Error('Error answering categorize dormouse task') if err
         res.redirect "/?exclude=#{segment_id}"
     else
@@ -63,6 +64,7 @@ exports.configure = (server) ->
         # post answer to dormouse
         dormouse.answerTask task_id, { transcription: transcription }, (err, r) ->
           console.log r # DEBUG
+          console.log err # DEBUG
           throw new Error('Error answering transcribe dormouse task') if err
         res.redirect "/?exclude=#{segment_id}"
     else
@@ -77,7 +79,7 @@ exports.configure = (server) ->
           j._id = journal._id
           j.segments = segments.filter (s) ->
             String(journal._id) is String(s.journal_id)
-          s_completed = segments.filter (s) ->
+          s_completed = j.segments.filter (s) ->
             s.completed
           j.progress = Math.ceil(s_completed.length / j.segments.length * 100)
           j.completed = journal.completed || (s_completed.length == j.segments.length)

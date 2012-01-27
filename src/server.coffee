@@ -12,8 +12,8 @@ models = require './models'
 
 mongoose.connect 'mongodb://localhost/transcrowdify'
 
-dormouse.server 'http://arya.stanford.edu:3777'
-dormouse.api_key 'f5d20b8caffe16deb8143a520c38ed2b23fd9def'
+dormouse.server 'http://journal.dormou.se:8080'
+dormouse.api_key '8eedc3bbeeb04a0d5202937f339176eb81adb70e'
 dormouse.project_id = 1 # transcrowdify
 
 models.define()
@@ -37,7 +37,7 @@ controllers.configure server
 
 # -- final server setup
 
-port = 3779
+port = process.env.PORT || 3779
 server.listen port
 
-console.log "Server running at http://localhost:#{port}/"
+console.log "Server listening on #{port}"
