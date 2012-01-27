@@ -17,9 +17,24 @@ html(lang="en")
         center
           h1 Transcription Status
       nav#sidebar.column.grid_3
-        ul.text
-          li
+        center.text
+          p
             a(href="/") Home
+        hr
+        center.text
+          strong Upload
+        form.text(action="/upload", enctype="multipart/form-data", method="post")
+          p
+            label(for="upload[title]") Title
+            input(type="text", placeholder="Journal title", id="upload[title]", name="upload[title]")
+          p
+            label(for="upload[email]") Email
+            input(type="text", placeholder="Notification email", id="upload[email]", name="upload[email]")
+          p
+            label(for="upload[file]") Journal PDF
+            input(type="file", id="upload[file]", name="upload[file]", accept="application/pdf")
+          p
+            input(type="submit", value="Upload")
       div#main.column.grid_9
         div.text
           for journal in journals
