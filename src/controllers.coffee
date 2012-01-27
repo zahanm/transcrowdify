@@ -136,8 +136,13 @@ notify_finalized = (journal) ->
   email = require './email'
   email.send_mail config
 
+accepted_types =
+  'application/pdf': 'pdf'
+  'image/jpeg': 'jpg'
+  'image/png': 'png'
+
 split = (ops) ->
-  if ops.file_type isnt 'application/pdf'
+  if ops.file_type not of accepted_types
     return fs.unlink ops.file_path
   # -- save Journal to db
   journal = new Journal
@@ -146,8 +151,10 @@ split = (ops) ->
     file_path: ops.file_path
   journal.save dbchecker
   # -- divide into segments
-  json_spawn './py_packages/bin/python', [ 'pdeff/split.py' ], journal.file_path, [], save_segments_to_db.bind(this, journal)
+  type = accepted_types[ops.file_type]
+  json_spawn './py_packages/bin/python', [ 'pdeff/split.py', type ], journal.file_path, [], save_segments_to_db.bind(this, journal)
 
+exports.accepted_types = accepted_types
 exports.split = split
 
 save_segments_to_db = (journal, segments) ->

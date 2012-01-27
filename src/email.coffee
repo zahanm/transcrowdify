@@ -56,12 +56,10 @@ mailparser.on 'attachment', (attachment) ->
   output = fs.createWriteStream fname
   attachment.stream.pipe output
 
-allowed_types = [ 'application/pdf' ]
-
 mailparser.on 'end', (mail) ->
   attachment = null
   for a in mail.attachments
-    if a.contentType in allowed_types
+    if a.contentType of controllers.accepted_types
       attachment = a
   if attachment
     fname = utils.normedPathJoin __dirname, '../uploads/', attachment.generatedFileName

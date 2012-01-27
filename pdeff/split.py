@@ -123,16 +123,32 @@ def split_pdf(pdf_fname):
       output.append({ 'location': segment_fname, 'page': page })
   json.dump(output, sys.stdout)
 
+def split_image(image_fname):
+  output = []
+  for segment_fname in divide_page(0, image_fname):
+    output.append({ 'location': segment_fname, 'page': page })
+  json.dump(output, sys.stdout)
+
 def cleanup_last_run():
   file_globs = ['tmp/*.pdf', 'tmp/*.png', 'tmp/*.tex', 'tmp/*.aux', 'tmp/*.log']
   for fg in file_globs:
     map(lambda f: os.unlink(f), glob(fg))
 
+def usage():
+  print('usage: python', __file__, '<pdf|jpg|png> and [input_pdf on stdio]')
+
 #### Initialize
 
 if __name__ == '__main__':
-  if len(sys.argv) == 1:
+  if len(sys.argv) == 2:
     cleanup_last_run()
-    split_pdf(sys.stdin.read().strip())
+    ftype = sys.argv[1]
+    fname = sys.stdin.read().strip()
+    if ftype == 'pdf':
+      split_pdf(fname)
+    elif ftype in set(['jpg', 'png']):
+      split_image(fname)
+    else:
+      usage()
   else:
-    print('usage: python', __file__, '| [input_pdf on stdio]')
+    usage()
