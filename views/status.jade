@@ -26,7 +26,7 @@ html(lang="en")
             h3= journal.title
             p Owned by #{journal.email}
             div.ui-progress-bar.ui-container
-              div.ui-progress(style="width: #{journal.progress}%")
+              div.ui-progress(style="width: #{journal.progress}%;")
                 span.ui-label Completed <b class="value">#{journal.progress}%</b>
             if journal.completed
               p Transcription complete

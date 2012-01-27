@@ -13,7 +13,7 @@ models = require './models'
 mongoose.connect 'mongodb://localhost/transcrowdify'
 
 dormouse.server 'http://journal.dormou.se:8080'
-dormouse.api_key '8eedc3bbeeb04a0d5202937f339176eb81adb70e'
+dormouse.api_key '5e60e715dff55d0ad0f4d807d1cc6dd6d1d044c3'
 dormouse.project_id = 1 # transcrowdify
 
 models.define()

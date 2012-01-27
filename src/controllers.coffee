@@ -47,8 +47,6 @@ exports.configure = (server) ->
           create_transcribe_task segment
         # post answer to dormouse
         dormouse.answerTask task_id, { mode: category }, (err, r) ->
-          console.log r # DEBUG
-          console.log err # DEBUG
           throw new Error('Error answering categorize dormouse task') if err
         res.redirect "/?exclude=#{segment_id}"
     else
@@ -63,8 +61,6 @@ exports.configure = (server) ->
         record_transcription segment_id, transcription
         # post answer to dormouse
         dormouse.answerTask task_id, { transcription: transcription }, (err, r) ->
-          console.log r # DEBUG
-          console.log err # DEBUG
           throw new Error('Error answering transcribe dormouse task') if err
         res.redirect "/?exclude=#{segment_id}"
     else
@@ -132,7 +128,7 @@ notify_finalized = (journal) ->
       You can access the searchable version of your journal at #{journal.searchable} .
       The transcribed version can be found at #{journal.transcribed} .
 
-      Powered by http://dormou.se
+      Powered by http://journal.dormou.se
       """
   email = require './email'
   email.send_mail config
