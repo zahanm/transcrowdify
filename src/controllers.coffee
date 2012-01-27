@@ -11,7 +11,7 @@ utils = require './utils'
 Journal = mongoose.model 'Journal'
 Segment = mongoose.model 'Segment'
 
-exports.configure = (server) ->
+exports.configure = (server, io) ->
 
   server.set 'view options', layout: false
 
@@ -97,6 +97,13 @@ exports.configure = (server) ->
             res.render 'complete.jade', journal: j
     else
       res.render 'complete.jade', journal: false
+
+  # socket.io config
+
+  io.sockets.on 'connection', (socket) ->
+    socket.emit 'hello', world: 'out there'
+    socket.on 'news', (data) ->
+      console.log data
 
 # -- helper functions
 

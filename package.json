@@ -20,6 +20,7 @@
     "nodemailer": "~0.2.4",
     "imap": "~0.2.7",
     "mailparser": "~0.2.21",
+    "socket.io": "~0.8.7",
     "dormouse": "0.0.2"
   },
   "devDependencies": {
