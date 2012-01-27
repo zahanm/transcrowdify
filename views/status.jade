@@ -36,7 +36,7 @@ html(lang="en")
           p
             input(type="submit", value="Upload")
       div#main.column.grid_9
-        div.text
+        div#journals_holder.text
           for journal in journals
             div.masterj(id="#{journal._id}", data-numsegments="#{journal.numsegments}")
               h3= journal.title
@@ -55,8 +55,8 @@ html(lang="en")
               else
                 p.status Transcription incomplete
               ul.segments
-                for s, i in journal.segments
+                for s in journal.segments
                   if s.completed
-                    li(id="#{s._id}", data-num="#{s.layout_order}") <a href="#{s.url}">Segment #{s.layout_order}</a> on page #{s.page} of type #{s.mode} is complete
+                    li(id="#{s._id}") <a href="#{s.url}">Segment #{s.layout_order}</a> on page #{s.page} of type #{s.mode} is complete
                   else
-                    li(id="#{s._id}", data-num="#{s.layout_order}") <a href="#{s.url}">Segment #{s.layout_order}</a> on page #{s.page} is pending
+                    li(id="#{s._id}") <a href="#{s.url}">Segment #{s.layout_order}</a> on page #{s.page} is pending

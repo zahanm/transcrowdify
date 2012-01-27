@@ -9,7 +9,7 @@
 
   // templates to use with mustache
   template_segment = '<a href="{{url}}">Segment {{layout_order}}</a> on page {{page}} of type {{mode}} is complete';
-  template_journal = '<div id="{{_id}}" class="masterj" data-numsegments="{{numsegments}}"><h3>{{title}}</h3><p>Owned by {{email}}</p><div class="ui-progress-bar ui-container"><div style="width: {{progress}}%;" class="ui-progress"><span class="ui-label"><b class="value" data-numdone="{{numdone}}">{{progress}}%</b></span></div></div><p>Transcription incomplete</p><ul class="segments">{{#segments}}<li id="{{_id}} data-num="{{layout_order}}"><a href="{{url}}">Segment {{layout_order}}</a> on page {{page}} is pending</li>{{/segments}}</ul></div>';
+  template_journal = '<div id="{{_id}}" class="masterj" data-numsegments="{{numsegments}}"><h3>{{title}}</h3><p>Owned by {{email}}</p><div class="ui-progress-bar ui-container"><div style="width: {{progress}}%;" class="ui-progress"><span class="ui-label"><b class="value" data-numdone="{{numdone}}">{{progress}}%</b></span></div></div><p>Transcription incomplete</p><ul class="segments">{{#segments}}<li id="{{_id}}"><a href="{{url}}">Segment {{layout_order}}</a> on page {{page}} is pending</li>{{/segments}}</ul></div>';
   template_status = 'Transcription complete<br/>You can view the pdfs at <a href="{{searchable}}">searchable</a> and <a href="{{transcribed}}">transcribed</a>.';
 
   // socket.io setup
@@ -23,7 +23,6 @@
 
       console.log(seg);
       // update segment line
-      seg.num = $('#' + seg._id).data('num');
       $('#' + seg._id).html($.mustache(template_segment, seg));
       // update progress bar
       var numsegments = Number( $('#' + seg.journal_id).data('numsegments') )
@@ -38,7 +37,11 @@
 
     socket.on('newjournal', function(journal) {
       console.log(journal);
-
+      // numsegments, numdone, percent
+      journal.numsegments = journal.segments.length;
+      journal.numdone = 0;
+      journal.progress = 0;
+      $('#journals_holder').append($.mustache(template_journal, journal));
     });
 
     socket.on('completejournal', function(journal) {
