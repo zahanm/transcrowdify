@@ -14,7 +14,7 @@
 
   // socket.io setup
   var socket;
-  socket = io.connect('http://localhost');
+  socket = io.connect('http://journal.dormou.se');
 
   $(document).ready(function() {
 
