@@ -167,7 +167,8 @@ exports.split = split
 
 save_segments_to_db = (journal, segments) ->
   # -- save Segments to db
-  journal.segments = segments.map (seg, i) ->
+  context = {}
+  context.segments = segments.map (seg, i) ->
     segment = new Segment
       file_path: seg.location
       url: utils.fsPathToUrl seg.location
@@ -177,7 +178,9 @@ save_segments_to_db = (journal, segments) ->
     segment.save (err, saved) ->
       create_categorize_task saved
     segment
-  io.sockets.emit 'newjournal', journal
+  for own k, v of journal._doc # XXX should not rely on private api
+    context[k] = v
+  io.sockets.emit 'newjournal', context
 
 create_categorize_task = (segment) ->
   # -- create dormouse task for segment
