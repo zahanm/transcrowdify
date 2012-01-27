@@ -70,24 +70,15 @@ exports.configure = (server) ->
   server.get '/status', (req, res) ->
     Segment.find (err, segments) ->
       Journal.find (err, journals) ->
-        context = journals.map (journal) ->
-          j = {}
-          j.title = journal.title
-          j._id = journal._id
+        journals.forEach (j) ->
           j.segments = segments.filter (s) ->
-            String(journal._id) is String(s.journal_id)
+            String(j._id) is String(s.journal_id)
           s_completed = j.segments.filter (s) ->
             s.completed
           j.progress = Math.ceil(s_completed.length / j.segments.length * 100)
-          j.completed = journal.completed
-          j.email = journal.email
           j.numdone = s_completed.length
           j.numsegments = j.segments.length
-          if j.completed
-            j.searchable = journal.searchable
-            j.transcribed = journal.transcribed
-          j
-        res.render 'status.jade', journals: context
+        res.render 'status.jade', journals: journals
 
   server.get '/complete', (req, res) ->
     p = url.parse req.url, true
@@ -110,11 +101,6 @@ exports.configure = (server) ->
     io.enable 'browser client etag'
     io.enable 'browser client gzip'
     io.set 'log level', 1
-
-  io.sockets.on 'connection', (socket) ->
-    # socket.emit 'hello', world: 'out there'
-    socket.on 'news', (data) ->
-      console.log data
 
 # -- helper functions
 
@@ -142,6 +128,9 @@ finalize_journal = (j_id, cb) ->
           cb journal if cb
 
 notify_finalized = (journal) ->
+  # notify over web
+  io.sockets.emit 'completejournal', journal
+  # notify over email
   config =
     to: journal.email
     subject: "You're journal transcription is complete!"
