@@ -8,10 +8,8 @@ html(lang="en")
     script(type="text/javascript", src="/js/less.min.js")
     script(type="text/javascript", src="/socket.io/socket.io.js")
     script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js")
+    script(type="text/javascript", src="/js/jquery.mustache.js")
     script(type="text/javascript", src="/js/status.js")
-
-    :coffeescript
-      console.log 'hi'
 
   body
     div#container.row
@@ -40,23 +38,25 @@ html(lang="en")
       div#main.column.grid_9
         div.text
           for journal in journals
-            h3= journal.title
-            p Owned by #{journal.email}
-            div.ui-progress-bar.ui-container
-              div.ui-progress(style="width: #{journal.progress}%;")
-                span.ui-label
-                  b.value= journal.progress + '%'
-            if journal.completed
-              p Transcription complete
-              p The pdfs can be viewed at:
-                a(href="#{journal.searchable}") searchable
-                | and
-                a(href="#{journal.transcribed}") transcribed
-            else
-              p Transcription incomplete
-            ul.segments
-              for s, i in journal.segments
-                if s.completed
-                  li <a href="#{s.url}">Segment #{i}</a> on page #{s.page + 1} of type #{s.mode} is complete
-                else
-                  li <a href="#{s.url}">Segment #{i}</a> on page #{s.page + 1} is pending
+            div.masterj(id="#{journal._id}", data-numsegments="#{journal.numsegments}")
+              h3= journal.title
+              p Owned by #{journal.email}
+              div.ui-progress-bar.ui-container
+                div.ui-progress(style="width: #{journal.progress}%;")
+                  span.ui-label
+                    b.value(data-numdone="#{journal.numdone}")= journal.progress + "%"
+              if journal.completed
+                p.status
+                  | Transcription complete<br/>
+                  | You can view the pdfs at
+                  | <a href="#{journal.searchable}">searchable</a>
+                  | and
+                  | <a href="#{journal.transcribed}">transcribed</a>
+              else
+                p.status Transcription incomplete
+              ul.segments
+                for s, i in journal.segments
+                  if s.completed
+                    li(id="#{s._id}", data-num="#{i+1}") <a href="#{s.url}">Segment #{i+1}</a> on page #{s.page + 1} of type #{s.mode} is complete
+                  else
+                    li(id="#{s._id}", data-num="#{i+1}") <a href="#{s.url}">Segment #{i+1}</a> on page #{s.page + 1} is pending

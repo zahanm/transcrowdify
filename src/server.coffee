@@ -19,7 +19,6 @@ dormouse.project_id = 1 # transcrowdify
 
 models.define()
 server = express.createServer()
-io = io.listen server
 
 # -- server middleware
 
@@ -32,16 +31,10 @@ server.configure ->
 server.configure 'development', ->
   server.use express.errorHandler dumpExceptions: true, showStack: true
 
-io.configure 'production', ->
-  io.enable 'browser client minification'
-  io.enable 'browser client etag'
-  io.enable 'browser client gzip'
-  io.set 'log level', 1
-
 # -- view controllers
 
 controllers = require './controllers'
-controllers.configure server, io
+controllers.configure server
 
 # -- final server setup
 

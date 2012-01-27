@@ -3,6 +3,7 @@
 fs = require 'fs'
 url = require 'url'
 mongoose = require 'mongoose'
+io = require 'socket.io'
 dormouse = require 'dormouse'
 
 utils = require './utils'
@@ -11,7 +12,7 @@ utils = require './utils'
 Journal = mongoose.model 'Journal'
 Segment = mongoose.model 'Segment'
 
-exports.configure = (server, io) ->
+exports.configure = (server) ->
 
   server.set 'view options', layout: false
 
@@ -80,6 +81,8 @@ exports.configure = (server, io) ->
           j.progress = Math.ceil(s_completed.length / j.segments.length * 100)
           j.completed = journal.completed
           j.email = journal.email
+          j.numdone = s_completed.length
+          j.numsegments = j.segments.length
           if j.completed
             j.searchable = journal.searchable
             j.transcribed = journal.transcribed
@@ -100,8 +103,16 @@ exports.configure = (server, io) ->
 
   # socket.io config
 
+  io = io.listen server
+
+  io.configure 'production', ->
+    io.enable 'browser client minification'
+    io.enable 'browser client etag'
+    io.enable 'browser client gzip'
+    io.set 'log level', 1
+
   io.sockets.on 'connection', (socket) ->
-    socket.emit 'hello', world: 'out there'
+    # socket.emit 'hello', world: 'out there'
     socket.on 'news', (data) ->
       console.log data
 
@@ -111,6 +122,7 @@ record_transcription = (s_id, t) ->
   Segment.findById s_id, (err, s) ->
     s.transcription = t
     s.completed = true
+    io.sockets.emit 'updatesegment', s
     s.save (err) ->
       Segment.find { 'journal_id': s.journal_id }, (err, ss) ->
         alldone = ss.every (seg) ->
