@@ -49,7 +49,7 @@ exports.configure = (server) ->
         # post answer to dormouse
         dormouse.answerTask task_id, { mode: category }, (err, r) ->
           throw new Error('Error answering categorize dormouse task') if err
-        res.redirect "/?exclude=#{segment_id}"
+        res.redirect "/"
     else
       res.redirect '/'
 
@@ -63,7 +63,7 @@ exports.configure = (server) ->
         # post answer to dormouse
         dormouse.answerTask task_id, { transcription: transcription }, (err, r) ->
           throw new Error('Error answering transcribe dormouse task') if err
-        res.redirect "/?exclude=#{segment_id}"
+        res.redirect "/"
     else
       res.redirect '/'
 
