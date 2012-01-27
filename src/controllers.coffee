@@ -167,15 +167,17 @@ exports.split = split
 
 save_segments_to_db = (journal, segments) ->
   # -- save Segments to db
-  segments.forEach (seg, i) ->
+  journal.segments = segments.map (seg, i) ->
     segment = new Segment
       file_path: seg.location
       url: utils.fsPathToUrl seg.location
       page: seg.page
-      layout_order: i
+      layout_order: i+1
       journal_id: journal._id
     segment.save (err, saved) ->
       create_categorize_task saved
+    segment
+  io.sockets.emit 'newjournal', journal
 
 create_categorize_task = (segment) ->
   # -- create dormouse task for segment

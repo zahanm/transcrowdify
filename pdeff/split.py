@@ -120,13 +120,13 @@ def split_pdf(pdf_fname):
   page_fnames = split_pages(pdf_fname)
   for page, png_fname in enumerate(convert_pages(page_fnames)):
     for segment_fname in divide_page(page, png_fname):
-      output.append({ 'location': segment_fname, 'page': page })
+      output.append({ 'location': segment_fname, 'page': page+1 })
   json.dump(output, sys.stdout)
 
 def split_image(image_fname):
   output = []
   for segment_fname in divide_page(0, image_fname):
-    output.append({ 'location': segment_fname, 'page': page })
+    output.append({ 'location': segment_fname, 'page': 1 })
   json.dump(output, sys.stdout)
 
 def cleanup_last_run():

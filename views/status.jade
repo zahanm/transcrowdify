@@ -57,6 +57,6 @@ html(lang="en")
               ul.segments
                 for s, i in journal.segments
                   if s.completed
-                    li(id="#{s._id}", data-num="#{i+1}") <a href="#{s.url}">Segment #{i+1}</a> on page #{s.page + 1} of type #{s.mode} is complete
+                    li(id="#{s._id}", data-num="#{s.layout_order}") <a href="#{s.url}">Segment #{s.layout_order}</a> on page #{s.page} of type #{s.mode} is complete
                   else
-                    li(id="#{s._id}", data-num="#{i+1}") <a href="#{s.url}">Segment #{i+1}</a> on page #{s.page + 1} is pending
+                    li(id="#{s._id}", data-num="#{s.layout_order}") <a href="#{s.url}">Segment #{s.layout_order}</a> on page #{s.page} is pending
