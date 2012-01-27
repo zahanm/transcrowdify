@@ -17,9 +17,9 @@ ids = [from..to]
 async.forEachSeries ids, (id, next) ->
     req = http.request
       method: 'DELETE'
-      host: 'arya.stanford.edu'
-      port: 3777
-      path: "/tasks/#{id}.json?api_key=6b044f121358683678e5e21de2202a5e0a0394d5"
+      host: 'journal.dormou.se'
+      port: 8080
+      path: "/tasks/#{id}.json?api_key=5e60e715dff55d0ad0f4d807d1cc6dd6d1d044c3"
     , (res) ->
       console.log "x #{id}"
       next()
