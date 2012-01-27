@@ -15,27 +15,31 @@ html(lang="en")
     div#container.row
       div#hdr.column.grid_12
         center
-          h1 Status of Transcriptions
+          h1 Transcription Status
       nav#sidebar.column.grid_3
         ul.text
           li
             a(href="/") Home
       div#main.column.grid_9
         div.text
-          each journal in journals
+          for journal in journals
             h3= journal.title
             p Owned by #{journal.email}
             div.ui-progress-bar.ui-container
               div.ui-progress(style="width: #{journal.progress}%;")
-                span.ui-label Completed <b class="value">#{journal.progress}%</b>
+                span.ui-label
+                  b.value= journal.progress + '%'
             if journal.completed
               p Transcription complete
-              p The pdfs can be viewed <a href="/complete?journal_id=#{journal._id}">here</a>
+              p The pdfs can be viewed at:
+                a(href="#{journal.searchable}") searchable
+                | and
+                a(href="#{journal.transcribed}") transcribed
             else
               p Transcription incomplete
             ul.segments
-              each s in journal.segments
+              for s, i in journal.segments
                 if s.completed
-                  li <a href="#{s.url}">Segment #{s._id}</a> on page #{s.page + 1} of type #{s.mode} is complete
+                  li <a href="#{s.url}">Segment #{i}</a> on page #{s.page + 1} of type #{s.mode} is complete
                 else
-                  li <a href="#{s.url}">Segment #{s._id}</a> on page #{s.page + 1} is pending
+                  li <a href="#{s.url}">Segment #{i}</a> on page #{s.page + 1} is pending

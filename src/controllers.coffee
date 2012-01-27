@@ -78,8 +78,11 @@ exports.configure = (server) ->
           s_completed = j.segments.filter (s) ->
             s.completed
           j.progress = Math.ceil(s_completed.length / j.segments.length * 100)
-          j.completed = journal.completed || (s_completed.length == j.segments.length)
+          j.completed = journal.completed
           j.email = journal.email
+          if j.completed
+            j.searchable = journal.searchable
+            j.transcribed = journal.transcribed
           j
         res.render 'status.jade', journals: context
 
