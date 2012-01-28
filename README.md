@@ -19,4 +19,6 @@ Powered by [Dormouse](http://dormou.se).
 
 Needed:
 sudo apt-get install libjpeg8-dev
+sudo apt-get install python-dev
+zlib, libjpeg deps for pil
 change project and template_id in two places, clientside code and serverside

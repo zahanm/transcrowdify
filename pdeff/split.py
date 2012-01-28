@@ -124,6 +124,13 @@ def split_pdf(pdf_fname):
   json.dump(output, sys.stdout)
 
 def split_image(image_fname):
+  # check if it is in portrait orientation
+  im = Image.open(image_fname)
+  width, height = im.size
+  if width > height:
+    out = im.transpose(Image.ROTATE_270)
+    out.save(image_fname)
+  # split it up
   output = []
   for segment_fname in divide_page(0, image_fname):
     output.append({ 'location': segment_fname, 'page': 1 })
