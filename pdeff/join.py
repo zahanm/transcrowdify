@@ -145,7 +145,7 @@ def join_pages(composites):
   searchable_pdf.close()
   map(lambda f: f.close(), pdf_pages)
   json.dump({
-    'transcribed': latex_pdf_fname,
+    # 'transcribed': latex_pdf_fname,
     'searchable': searchable_pdf.name
   }, sys.stdout)
 
