@@ -73,9 +73,9 @@ LATEX_WRAP = """
 """
 
 LATEX_EQN_SNIPPET = """
-\\begin{{equation*}}
+\\begin{{eqnarray*}}
 {0}
-\\end{{equation*}}
+\\end{{eqnarray*}}
 """
 
 LATEX_NEWPAGE_SNIPPET = """

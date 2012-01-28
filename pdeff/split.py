@@ -130,6 +130,11 @@ def split_image(image_fname):
   if width > height:
     out = im.transpose(Image.ROTATE_270)
     out.save(image_fname)
+  im = Image.open(image_fname)
+  width, height = im.size
+  if width != 571:
+    out = im.resize((571, 731))
+    out.save(image_fname)
   # split it up
   output = []
   for segment_fname in divide_page(0, image_fname):
