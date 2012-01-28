@@ -151,6 +151,7 @@ notify_finalized = (journal) ->
 accepted_types =
   'application/pdf': 'pdf'
   'image/jpeg': 'jpg'
+  'image/jpg': 'jpg'
   'image/png': 'png'
 
 split = (ops) ->
