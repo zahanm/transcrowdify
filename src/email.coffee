@@ -103,7 +103,7 @@ nodemailer.SMTP =
 # body: plaintext body
 #
 exports.send_mail = (config) ->
-  console.info "Sending email to #{to}"
+  console.info "Sending email to #{config.to}"
   config.sender = project_email
   nodemailer.send_mail config, (err, success) ->
     console.info 'Message ' + if success then 'sent' else 'failed'
