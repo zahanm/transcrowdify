@@ -24,6 +24,10 @@ exports.configure = (server) ->
     email.check_mail()
     res.end 'Fetching email'
 
+  server.get '/testcomplete', (req, res) ->
+    record_transcription '4f23b46c194f563711000014', '...'
+    res.end 'Completing'
+
   server.post '/upload', (req, res) ->
     if req.form
       req.form.complete (err, fields, files) ->
@@ -109,14 +113,14 @@ exports.configure = (server) ->
 # -- helper functions
 
 record_transcription = (s_id, t) ->
-  Segment.findById s_id, (err, s) ->
-    s.transcription = t
-    s.completed = true
-    io.sockets.emit 'updatesegment', s
-    s.save (err) ->
-      Segment.find { 'journal_id': s.journal_id }, (err, ss) ->
-        alldone = ss.every (seg) ->
-          seg.completed
+  Segment.findById s_id, (err, seg) ->
+    seg.transcription = t
+    seg.completed = true
+    io.sockets.emit 'updatesegment', seg
+    seg.save (err) ->
+      Segment.find { 'journal_id': seg.journal_id }, (err, segs) ->
+        alldone = segs.every (s) ->
+          s.completed
         if alldone
           finalize_journal seg.journal_id
 
