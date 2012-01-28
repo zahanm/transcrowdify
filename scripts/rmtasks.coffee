@@ -5,10 +5,10 @@ async = require 'async'
 switch process.argv.length
   when 3
     from = 0
-    to = process.argv[2]
+    to = Number process.argv[2]
   when 4
-    from = process.argv[2]
-    to = process.argv[3]
+    from = Number process.argv[2]
+    to = Number process.argv[3]
   else
     console.log 'usage: rmtasks.coffee [<from>] <to>'
     process.exit(1)
