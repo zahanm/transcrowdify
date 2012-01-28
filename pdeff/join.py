@@ -48,12 +48,12 @@ PARA_PADDING = 25
 def paint_original_segments(fnames, transcriptions, page):
   page_file = NamedTemporaryFile(suffix='.pdf', dir=path.abspath('./tmp/'), delete=False)
   pdf = Canvas(page_file.name, pagesize=A4)
-  top = A4[1]
+  page_width, top = A4
   for fname, transcription in itertools.izip(fnames, transcriptions):
     segment = Image.open(fname)
     width, height = segment.size
     p = Paragraph(transcription, ParagraphStyle('Normal', alignment=TA_CENTER))
-    p.wrapOn(pdf, A4[0] - PARA_PADDING * 2, height)
+    p.wrapOn(pdf, page_width - PARA_PADDING * 2, height)
     p.drawOn(pdf, PARA_PADDING, top - height / 2)
     pdf.drawImage(fname, 0, top - height)
     top -= height

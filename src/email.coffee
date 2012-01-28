@@ -62,7 +62,7 @@ setup_parser = ->
         ext = path.extname attach_fname
         rand_fname = gen_random_fname ext
         disk_fname = path.resolve __dirname, '../uploads', rand_fname
-      output = fs.createWriteStream fname
+      output = fs.createWriteStream disk_fname
       attachment.stream.pipe output
   mailparser.on 'end', (mail) ->
     if attach_fname and disk_fname
