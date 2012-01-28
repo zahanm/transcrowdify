@@ -23,10 +23,6 @@ exports.configure = (server) ->
     email = require './email'
     email.check_mail()
     res.end 'Fetching email'
-  
-  server.get '/complete', (req, res) ->
-    finalize_journal '4f23fe58942795d31700002f'
-    res.end 'completing'
 
   server.post '/upload', (req, res) ->
     if req.form
@@ -127,10 +123,9 @@ record_transcription = (s_id, t) ->
 finalize_journal = (j_id, cb) ->
   Journal.findById j_id, (err, journal) ->
     join journal, (out) ->
-      # if out.transcribed? and out.searchable?
-      if out.searchable?
+      if out.transcribed? and out.searchable?
         journal.completed = true
-        # journal.transcribed = utils.fsPathToUrl out.transcribed
+        journal.transcribed = utils.fsPathToUrl out.transcribed
         journal.searchable = utils.fsPathToUrl out.searchable
         journal.save (err) ->
           notify_finalized journal
@@ -146,6 +141,7 @@ notify_finalized = (journal) ->
     body:
       """
       You can access the searchable version of your journal at http://journal.dormou.se#{journal.searchable} .
+      The transcribed version can be found at http://journal.dormou.se#{journal.transcribed} .
 
       Powered by http://journal.dormou.se
       """

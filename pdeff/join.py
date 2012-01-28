@@ -73,9 +73,9 @@ LATEX_WRAP = """
 """
 
 LATEX_EQN_SNIPPET = """
-\\begin{{eqnarray*}}
+\\begin{{equation*}}
 {0}
-\\end{{eqnarray*}}
+\\end{{equation*}}
 """
 
 LATEX_NEWPAGE_SNIPPET = """
@@ -131,7 +131,7 @@ def join_pages(composites):
     latex_buf.write(LATEX_NEWPAGE_SNIPPET)
   raw_latex = LATEX_WRAP.format(raw_latex=latex_buf.getvalue(), font_size=LATEX_FONT_SIZE)
   # transcribed pdf
-  # latex_pdf_fname = latex_to_pdf(raw_latex)
+  latex_pdf_fname = latex_to_pdf(raw_latex)
   # ---
   # searchable pdf
   pdf_writer = PdfFileWriter()
@@ -145,7 +145,7 @@ def join_pages(composites):
   searchable_pdf.close()
   map(lambda f: f.close(), pdf_pages)
   json.dump({
-    # 'transcribed': latex_pdf_fname,
+    'transcribed': latex_pdf_fname,
     'searchable': searchable_pdf.name
   }, sys.stdout)
 
