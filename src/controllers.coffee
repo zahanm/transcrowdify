@@ -24,10 +24,6 @@ exports.configure = (server) ->
     email.check_mail()
     res.end 'Fetching email'
 
-  server.get '/testcomplete', (req, res) ->
-    record_transcription '4f23b46c194f563711000014', '...'
-    res.end 'Completing'
-
   server.post '/upload', (req, res) ->
     if req.form
       req.form.complete (err, fields, files) ->
