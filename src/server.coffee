@@ -6,7 +6,6 @@ mongoose = require 'mongoose'
 io = require 'socket.io'
 dormouse = require 'dormouse'
 
-utils = require './utils'
 models = require './models'
 
 # -- configs
@@ -24,9 +23,9 @@ server = express.createServer()
 
 server.configure ->
   server.use express.logger 'tiny'
-  server.use connect_form keepExtensions: true, uploadDir: utils.normedPathJoin __dirname, '../uploads'
+  server.use connect_form keepExtensions: true, uploadDir: path.resolve __dirname, '../uploads'
   server.use server.router
-  server.use express.static utils.normedPathJoin __dirname, '../static'
+  server.use express.static path.resolve __dirname, '../static'
 
 server.configure 'development', ->
   server.use express.errorHandler dumpExceptions: true, showStack: true
