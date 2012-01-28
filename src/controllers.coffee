@@ -140,8 +140,8 @@ notify_finalized = (journal) ->
     subject: "You're journal transcription is complete!"
     body:
       """
-      You can access the searchable version of your journal at http://journal.dormou.se/#{journal.searchable} .
-      The transcribed version can be found at http://journal.dormou.se/#{journal.transcribed} .
+      You can access the searchable version of your journal at http://journal.dormou.se#{journal.searchable} .
+      The transcribed version can be found at http://journal.dormou.se#{journal.transcribed} .
 
       Powered by http://journal.dormou.se
       """
