@@ -1,11 +1,11 @@
 
 fs = require 'fs'
+path = require 'path'
 nodemailer = require 'nodemailer'
 ImapConnection = require('imap').ImapConnection
 MailParser = require("mailparser").MailParser
 
 controllers = require './controllers'
-utils = require './utils'
 
 project_email = 'journal@dormou.se'
 project_pw = '12qwas12'
@@ -34,52 +34,57 @@ cmds = [
     imap.search [ 'UNSEEN' ], next
   (msg_ids) ->
     if not msg_ids.length
-      console.log 'Inbox empty'
+      console.info 'Inbox empty'
       return imap.logout
     fetch = imap.fetch msg_ids, { request: { headers: false, body: 'full' } }
     fetch.on 'message', get_message
     fetch.on 'end', ->
-      console.log 'Done fetching all messages'
+      console.info 'Done fetching all messages'
       next null, msg_ids
   (msg_ids) ->
     imap.addFlags msg_ids, 'Seen', next
   ->
-    console.log 'Done seeing messages, now logging out'
+    console.info 'Done seeing messages, now logging out'
     imap.logout next
 ]
 
-mailparser = new MailParser
-  streamAttachments: true
-
-mailparser.on 'attachment', (attachment) ->
-  fname = utils.normedPathJoin __dirname, '../uploads/', attachment.generatedFileName
-  output = fs.createWriteStream fname
-  attachment.stream.pipe output
-
-mailparser.on 'end', (mail) ->
-  attachment = null
-  for a in mail.attachments
-    if a.contentType of controllers.accepted_types
-      attachment = a
-  if attachment
-    fname = utils.normedPathJoin __dirname, '../uploads/', attachment.generatedFileName
-    options =
-      title: mail.subject
-      email: mail.from[0].address
-      file_path: fname
-      file_type: attachment.contentType
-    console.log 'Splitting the journal'
-    controllers.split options
+setup_parser = ->
+  mailparser = new MailParser
+    streamAttachments: true
+  disk_fname = attach_fname = attach_type = null
+  mailparser.on 'attachment', (attachment) ->
+    if attachment.contentType of controllers.accepted_types
+      attach_type = attachment.contentType
+      attach_fname = attachment.generatedFileName
+      disk_fname = path.resolve __dirname, '../uploads/', attach_fname
+      # check if disk_fname exists, set to random name if so
+      if path.existsSync disk_fname
+        ext = path.extname attach_fname
+        rand_fname = gen_random_fname ext
+        disk_fname = path.resolve __dirname, '../uploads', rand_fname
+      output = fs.createWriteStream fname
+      attachment.stream.pipe output
+  mailparser.on 'end', (mail) ->
+    if attach_fname and disk_fname
+      options =
+        title: mail.subject
+        email: mail.from[0].address
+        file_path: disk_fname
+        file_type: attach_type
+      console.info 'Splitting the journal'
+      controllers.split options
+  mailparser
 
 get_message = (msg) ->
-  console.log 'We have a new email!'
+  console.info 'We have a new email!'
+  mailparser = setup_parser()
   msg.on 'data', (chunk) ->
     mailparser.write chunk
   msg.on 'end', ->
     mailparser.end()
 
 exports.check_mail = ->
-  console.log 'Checking email'
+  console.info 'Checking email'
   cmd = 0
   next()
 
@@ -98,7 +103,21 @@ nodemailer.SMTP =
 # body: plaintext body
 #
 exports.send_mail = (config) ->
-  console.log "Sending email to #{to}"
+  console.info "Sending email to #{to}"
   config.sender = project_email
   nodemailer.send_mail config, (err, success) ->
-    console.log 'Message ' + if success then 'sent' else 'failed'
+    console.info 'Message ' + if success then 'sent' else 'failed'
+
+# Generate a random file name
+# taken from https://github.com/bruce/node-temp/
+gen_random_fname = (ext) ->
+  now = new Date()
+  name = [
+    now.getYear(), now.getMonth(), now.getDay(),
+    '-',
+    process.pid,
+    '-',
+    (Math.random() * 0x100000000 + 1).toString(36),
+    ext
+  ].join('')
+  name
