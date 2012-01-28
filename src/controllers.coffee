@@ -23,6 +23,10 @@ exports.configure = (server) ->
     email = require './email'
     email.check_mail()
     res.end 'Fetching email'
+  
+  server.get '/complete', (req, res) ->
+    finalize_journal '4f23fe58942795d31700002f'
+    res.end 'completing'
 
   server.post '/upload', (req, res) ->
     if req.form
