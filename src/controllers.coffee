@@ -19,7 +19,7 @@ exports.configure = (server) ->
   server.get '/', (req, res) ->
     res.render 'index.jade'
 
-  server.get '/testemail', (req, res) ->
+  server.get '/checkemail', (req, res) ->
     email = require './email'
     email.check_mail()
     res.end 'Fetching email'
@@ -68,6 +68,10 @@ exports.configure = (server) ->
       res.redirect '/'
 
   server.get '/status', (req, res) ->
+    # check mail
+    email = require './email'
+    email.check_mail()
+    # deal with rendering the page
     Segment.find (err, segments) ->
       Journal.find (err, journals) ->
         journals.forEach (j) ->
