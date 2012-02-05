@@ -143,7 +143,7 @@ notify_finalized = (journal) ->
       You can access the searchable version of your journal at http://journal.dormou.se#{journal.searchable} .
       The transcribed version can be found at http://journal.dormou.se#{journal.transcribed} .
 
-      Powered by http://journal.dormou.se
+      Powered by http://dormou.se
       """
   email = require './email'
   email.send_mail config
