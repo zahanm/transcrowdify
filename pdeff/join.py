@@ -73,9 +73,9 @@ LATEX_WRAP = """
 """
 
 LATEX_EQN_SNIPPET = """
-\\begin{{equation*}}
+\\begin{{eqnarray*}}
 {0}
-\\end{{equation*}}
+\\end{{eqnarray*}}
 """
 
 LATEX_NEWPAGE_SNIPPET = """
@@ -114,7 +114,7 @@ def assemble_latex(fnames, transcriptions, types):
     else:
       # t_type= 'text'
       buf.write(stripped.replace('_', '\_').replace('^', '\^'))
-    buf.write('\n')
+    buf.write('\\newline\n')
   return buf.getvalue()
 
 def join_pages(composites):
