@@ -11,21 +11,13 @@ html(lang="en")
     :coffeescript
       $dm.server 'http://journal.dormou.se:8080'
       $dm.api_key '5e60e715dff55d0ad0f4d807d1cc6dd6d1d044c3' # XXX should not be used
-      $dm.user = 'zahanm' # XXX should only be retrievable - set remotely
-      $dm.project_id = 1 # transcrowdify
+      $dm.project_id 1 # transcrowdify
       template_urls =
         1: '/templates/transcribe.html' # zahanm/transcribe.template
         2: '/templates/categorize.html' # zahanm/categorize.template
       $(document).ready ->
         q = $dm.getTasks()
-        q.eq 'project_id', $dm.project_id
         q.iscomplete false
-        if '?exclude=' in document.location.href # poor man's query string parsing
-          s = document.location.href
-          start = s.indexOf('?exclude=') + '?exclude='.length
-          end = if s.indexOf('&') >= 0 then s.indexOf('&') else s.length
-          exclude = s.slice start, end
-          q.ne 'segment_id', exclude
         q.order_by '?'
         q.limit 1
         q.run (err, tasks) ->
@@ -43,6 +35,13 @@ html(lang="en")
         center
           h2 Journal Transcription
       nav#sidebar.column.grid_3
+        center.text
+          if user
+            p #{user}
+          else
+            p <a href="#{login_url}">Login</a>
+            p <a href="#{signup_url}">Sign Up</a>
+        hr
         center.text
           p
             a(href="/status") Status

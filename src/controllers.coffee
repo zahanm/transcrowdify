@@ -1,7 +1,8 @@
 
 { spawn } = require 'child_process'
 fs = require 'fs'
-url = require 'url'
+querystring = require 'querystring'
+request = require 'request'
 mongoose = require 'mongoose'
 io = require 'socket.io'
 dormouse = require 'dormouse'
@@ -17,7 +18,14 @@ exports.configure = (server) ->
   server.set 'view options', layout: false
 
   server.get '/', (req, res) ->
-    res.render 'index.jade'
+    context = {}
+    if req.session.access_token
+      context['user'] = req.session.user
+      console.log 'user', req.session.user
+    else
+      context['login_url'] = dormouse.login_url 'journal.dormou.se'
+      context['signup_url'] = dormouse.signup_url 'journal.dormou.se'
+    res.render 'index.jade', context
 
   server.get '/checkemail', (req, res) ->
     email = require './email'
@@ -85,8 +93,7 @@ exports.configure = (server) ->
         res.render 'status.jade', journals: journals
 
   server.get '/complete', (req, res) ->
-    p = url.parse req.url, true
-    if p.query['journal_id']?
+    if req.query['journal_id']?
       Journal.findById p.query['journal_id'], (err, journal) ->
         if journal.completed
           res.render 'complete.jade', journal: journal
@@ -95,6 +102,32 @@ exports.configure = (server) ->
             res.render 'complete.jade', journal: j
     else
       res.render 'complete.jade', journal: false
+
+  #### Dormouse authentication
+  #
+  # This is hard
+  # Set up a endpoint that talks to the oauth backend for dormouse
+  server.get '/authenticate', (req, res) ->
+    dm_server = dormouse.server()
+    project_id = dormouse.project_id()
+    api_key = dormouse.api_key()
+    code = req.query['code']
+    conosle.info code
+    qs = querystring.stringify
+      project_id: project_id
+      api_key: api_key
+      code: code
+    request.get "#{dm_server}/oauth/access_token.json?" + qs, (err, r) ->
+      # TODO error checking
+      req.session.access_token = r['access_token']
+      console.info req.session.access_token
+      qs = querystring.stringify
+        access_token : req.session.access_token
+      request.get "#{dm_server}/api/v1/users/current.json?" + qs, (err, r) ->
+        # TODO error checking
+        req.session.user = r['user']
+        console.info req.session.user
+        res.redirect '/'
 
   # socket.io config
 
