@@ -23,6 +23,8 @@ server = express.createServer()
 
 server.configure ->
   server.use express.logger 'tiny'
+  server.use express.cookieParser()
+  server.use express.session()
   server.use connect_form keepExtensions: true, uploadDir: path.resolve __dirname, '../uploads'
   server.use server.router
   server.use express.static path.resolve __dirname, '../static'
