@@ -46,4 +46,7 @@ html(lang="en")
           div#task.text !{task}
         else
           div#nothing.text
-            strong Nothing to transcribe currently, please upload a journal
+            if user
+              strong Nothing to transcribe currently, please upload a journal
+            else
+              strong Please sign in to use the service
