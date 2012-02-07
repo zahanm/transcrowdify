@@ -17,8 +17,12 @@ exports.configure = (server) ->
 
   server.set 'view options', layout: false
 
+  # for connect-assets
+  css.root = '/styles'
+  js.root  = '/js'
+
   server.get '/', (req, res) ->
-    context = {}
+    context = 'user': null
     if req.session.access_token
       context['user'] = req.session.user
       console.log 'user', req.session.user
