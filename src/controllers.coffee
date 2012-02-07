@@ -27,7 +27,6 @@ exports.configure = (server) ->
       context['logout_url'] = dormouse.logout_url req.headers.host
       dmconnect.fetch_render_task req.session.access_token, (err, task) ->
         console.error err if err
-        console.info 'task', task
         context['task'] = task
         res.render 'index.jade', context
     else
