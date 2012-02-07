@@ -1,8 +1,7 @@
 
 { spawn } = require 'child_process'
 fs = require 'fs'
-querystring = require 'querystring'
-request = require 'request'
+
 mongoose = require 'mongoose'
 io = require 'socket.io'
 dormouse = require 'dormouse'
@@ -27,8 +26,8 @@ exports.configure = (server) ->
       context['user'] = req.session.user
       console.log 'user', req.session.user
     else
-      context['login_url'] = dormouse.login_url 'journal.dormou.se'
-      context['signup_url'] = dormouse.signup_url 'journal.dormou.se'
+      context['login_url'] = dormouse.login_url req.headers.host
+      context['signup_url'] = dormouse.signup_url req.headers.host
     res.render 'index.jade', context
 
   server.get '/checkemail', (req, res) ->
@@ -107,34 +106,10 @@ exports.configure = (server) ->
     else
       res.render 'complete.jade', journal: false
 
-  #### Dormouse authentication
-  #
-  # This is hard
-  # Set up a endpoint that talks to the oauth backend for dormouse
-  server.get '/authenticate', (req, res) ->
-    dm_server = dormouse.server()
-    project_id = dormouse.project_id()
-    api_key = dormouse.api_key()
-    code = req.query['code']
-    conosle.info code
-    qs = querystring.stringify
-      project_id: project_id
-      api_key: api_key
-      code: code
-    request.get "#{dm_server}/oauth/access_token.json?" + qs, (err, r) ->
-      # TODO error checking
-      req.session.access_token = r['access_token']
-      console.info req.session.access_token
-      qs = querystring.stringify
-        access_token : req.session.access_token
-      request.get "#{dm_server}/api/v1/users/current.json?" + qs, (err, r) ->
-        # TODO error checking
-        req.session.user = r['user']
-        console.info req.session.user
-        res.redirect '/'
+  # dormouse authentication
+  dormouse.setup_auth server
 
   # socket.io config
-
   io = io.listen server
 
   io.configure 'production', ->
