@@ -18,13 +18,11 @@ exports.configure = (server) ->
 
   # for connect-assets
   css.root = '/styles'
-  js.root  = '/js'
 
   server.get '/', (req, res) ->
     context = 'user': null
     if req.session.access_token
       context['user'] = req.session.user
-      console.log 'user', req.session.user
     else
       context['login_url'] = dormouse.login_url req.headers.host
       context['signup_url'] = dormouse.signup_url req.headers.host

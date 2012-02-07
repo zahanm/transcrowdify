@@ -17,7 +17,7 @@ html(lang="en")
       nav#sidebar.column.grid_3
         center.text
           if user
-            p #{user}
+            p Hi #{user.fullname}
           else
             p <a href="#{login_url}">Login</a>
             p <a href="#{signup_url}">Sign Up</a>
