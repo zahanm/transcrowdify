@@ -43,7 +43,7 @@ html(lang="en")
             input(type="submit", value="Upload")
       div#main.column.grid_9
         if task
-          div#task.text= task
+          div#task.text !{task}
         else
           div#nothing.text
             strong Nothing to transcribe currently, please upload a journal

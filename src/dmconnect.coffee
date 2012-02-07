@@ -21,5 +21,5 @@ exports.fetch_render_task = (access_token, callback) ->
       task = tasks[0]
       t_fname = task_template_map[task.template_id]
       fs.readFile t_fname, (err, template) ->
-        rendered = dormouse.render template, task
+        rendered = dormouse.render template.toString(), task
         callback null, rendered
