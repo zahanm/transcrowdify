@@ -18,6 +18,7 @@ html(lang="en")
         center.text
           if user
             p Hi #{user.fullname}
+            p <a href="#{logout_url}">Logout</a>
           else
             p <a href="#{login_url}">Login</a>
             p <a href="#{signup_url}">Sign Up</a>
@@ -41,8 +42,8 @@ html(lang="en")
           p
             input(type="submit", value="Upload")
       div#main.column.grid_9
-        div#task.text
-          center#loading
-            img(src="/images/loading.gif")
-          p#nothing
+        if task
+          div#task.text= task
+        else
+          div#nothing.text
             strong Nothing to transcribe currently, please upload a journal

@@ -6,9 +6,10 @@ mongoose = require 'mongoose'
 io = require 'socket.io'
 dormouse = require 'dormouse'
 
+dmconnect = require './dmconnect'
 utils = require './utils'
 
-# -- models
+# models
 Journal = mongoose.model 'Journal'
 Segment = mongoose.model 'Segment'
 
@@ -20,13 +21,19 @@ exports.configure = (server) ->
   css.root = '/styles'
 
   server.get '/', (req, res) ->
-    context = 'user': null
+    context = 'user': null, 'task': null
     if req.session.access_token
       context['user'] = req.session.user
+      context['logout_url'] = dormouse.logout_url req.headers.host
+      dmconnect.fetch_render_task req.session.access_token, (err, task) ->
+        console.error err if err
+        console.info 'task', task
+        context['task'] = task
+        res.render 'index.jade', context
     else
       context['login_url'] = dormouse.login_url req.headers.host
       context['signup_url'] = dormouse.signup_url req.headers.host
-    res.render 'index.jade', context
+      res.render 'index.jade', context
 
   server.get '/checkemail', (req, res) ->
     email = require './email'
