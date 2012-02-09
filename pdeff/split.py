@@ -106,6 +106,7 @@ def divide_page(page_num, page_fname):
   left, right = 0, width
   optimal = optimal_dividers(page)
   optimal = [0] + optimal + [height]
+  optimal.sort() # dunno why this should be necessary
   for i, (top, bottom) in enumerate(itertools.izip(optimal[:-1], optimal[1:])):
     segment_fname = segment_fname_template.format(i)
     segment = page.copy()
