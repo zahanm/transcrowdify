@@ -10,7 +10,7 @@ task_template_map =
 
 exports.fetch_render_task = (access_token, callback) ->
   q = dormouse.getTasks()
-  q.authenticate access_token
+  q.authenticate access_token if access_token
   q.iscomplete false
   q.order_by '?'
   q.limit 1
@@ -23,3 +23,15 @@ exports.fetch_render_task = (access_token, callback) ->
       fs.readFile t_fname, (err, template) ->
         rendered = dormouse.render template.toString(), task
         callback null, rendered
+
+exports.fetch_render_task_for_id = (task_id, access_token, callback) ->
+  options = {}
+  options['access_token'] = access_token if access_token
+  dormouse.getTask task_id, options, (err, task) ->
+    if err or not task
+      callback "No matching task #{task_id} was found", null
+    else
+    t_fname = task_template_map[task.template_id]
+    fs.readFile t_fname, (err, template) ->
+      rendered = dormouse.render template.toString(), task
+      callback null, rendered

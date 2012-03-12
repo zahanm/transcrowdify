@@ -34,6 +34,16 @@ exports.configure = (server) ->
       context['signup_url'] = dormouse.signup_url req.headers.host
       res.render 'index.jade', context
 
+  server.get '/task', (req, res) ->
+    context = 'task': null
+    if req.query['task_id']?
+      dmconnect.fetch_render_task_for_id req.query['task_id'], null, (err, task) ->
+        console.error err if err
+        context['task'] = task
+        res.render 'task.jade', context
+    else
+    res.render 'task.jade', context
+
   server.get '/checkemail', (req, res) ->
     email = require './email'
     email.check_mail()
@@ -221,10 +231,15 @@ create_transcribe_task = (segment) ->
     name: "transcribe #{segment._id}"
     project_id: dormouse.project_id
     template_id: 1 # zahanm/transcribe.template
+    eligibility: { predicate: null, communities: [ 'mturk' ] }
     parameters:
       segment_url: segment.url
       mode: segment.mode
       segment_id: segment._id
+      turk_title: "Transcribe Text"
+      turk_description: "Please transcribe the text you see in the image."
+      turk_reward: 0.02
+      turk_url: "http://journal.dormouse.se/task/"
   dormouse.createTask task_info, (err, r) ->
     throw new Error('Error creating transcribe dormouse task') if err
 
