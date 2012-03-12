@@ -42,7 +42,7 @@ exports.configure = (server) ->
         context['task'] = task
         res.render 'task.jade', context
     else
-    res.render 'task.jade', context
+      res.render 'task.jade', context
 
   server.get '/checkemail', (req, res) ->
     email = require './email'
