@@ -239,7 +239,7 @@ create_transcribe_task = (segment) ->
       turk_title: "Transcribe Text"
       turk_description: "Please transcribe the text you see in the image."
       turk_reward: 0.02
-      turk_url: "http://journal.dormouse.se/task/"
+      turk_url: "http://journal.dormou.se/task/"
   dormouse.createTask task_info, (err, r) ->
     throw new Error('Error creating transcribe dormouse task') if err
 
