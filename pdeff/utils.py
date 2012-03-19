@@ -14,4 +14,5 @@ def strip_extra_whitespace(s):
 # returns positions of bottomk
 def topk_pos(l, k):
   pos_val = nlargest(k, enumerate(l), lambda i: i[1])
-  return map(lambda i: i[0], pos_val)
+  vals = map(lambda i: i[0], pos_val)
+  return sorted(vals)

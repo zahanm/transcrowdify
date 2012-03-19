@@ -92,10 +92,23 @@ def optimal_dividers(im):
         dist = diff
         close = pos
     return close
+  def rm_within_boundary(l, i, min_height):
+    # assumption that item is in l
+    # assumption that l is sorted
+    item = l[i]
+    lower, upper = i, i
+    while abs(item - l[lower]) <= min_height:
+      lower -= 1
+    lower += 1
+    while abs(l[upper] - item) <= min_height:
+      upper += 1
+    del l[lower:upper]
+  min_height = height / ( SEGMENTS_PER_PAGE * 2 )
   for pos, d in enumerate(optimal):
     p = closest_pos(candidates, d)
     optimal[pos] = candidates[p]
-    del candidates[p]
+    rm_within_boundary(candidates, p, min_height)
+  print(optimal)
   return optimal
 
 def divide_page(page_num, page_fname):
