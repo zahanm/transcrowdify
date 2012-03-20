@@ -8,6 +8,10 @@ task_template_map =
   1: path.resolve __dirname, '../static/templates/transcribe.html'
   2: path.resolve __dirname, '../static/templates/categorize.html'
 
+task_submit_map =
+  1: '/transcribe'
+  2: '/categorize'
+
 exports.fetch_render_task = (access_token, callback) ->
   q = dormouse.getTasks()
   q.authenticate access_token if access_token
@@ -22,7 +26,7 @@ exports.fetch_render_task = (access_token, callback) ->
       t_fname = task_template_map[task.template_id]
       fs.readFile t_fname, (err, template) ->
         rendered = dormouse.render template.toString(), task
-        callback null, rendered
+        callback null, html: rendered, submit: task_submit_map[task.template_id]
 
 exports.fetch_render_task_for_id = (task_id, access_token, callback) ->
   options = {}
@@ -34,4 +38,4 @@ exports.fetch_render_task_for_id = (task_id, access_token, callback) ->
       t_fname = task_template_map[task.template_id]
       fs.readFile t_fname, (err, template) ->
         rendered = dormouse.render template.toString(), task
-        callback null, rendered
+        callback null, html: rendered

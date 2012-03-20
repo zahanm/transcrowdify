@@ -1,6 +1,6 @@
 
 div#task.text
-  form(method="post", action="#{submit_url}")
+  form(method="post", action="#{submit}", id="task_form")
     !{task}
     if assignmentId
       input(type="hidden", id="assignmentId", name="assignmentId", value="#{assignmentId}")

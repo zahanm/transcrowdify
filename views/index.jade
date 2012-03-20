@@ -44,7 +44,7 @@ html(lang="en")
       div#main.column.grid_9
         if task
           div#task.text
-            form(action="/transcribe", method="post", id="transcribe")
+            form(action="#{submit}", method="post", id="task_form")
               !{task}
         else
           div#nothing.text
