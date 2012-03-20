@@ -108,7 +108,6 @@ def optimal_dividers(im):
     p = closest_pos(candidates, d)
     optimal[pos] = candidates[p]
     rm_within_boundary(candidates, p, min_height)
-  print(optimal)
   return optimal
 
 def divide_page(page_num, page_fname):
