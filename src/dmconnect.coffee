@@ -4,7 +4,7 @@ path = require 'path'
 
 dormouse = require 'dormouse'
 
-task_template_map = 
+task_template_map =
   1: path.resolve __dirname, '../static/templates/transcribe.html'
   2: path.resolve __dirname, '../static/templates/categorize.html'
 
@@ -31,7 +31,7 @@ exports.fetch_render_task_for_id = (task_id, access_token, callback) ->
     if err or not task
       callback "No matching task #{task_id} was found", null
     else
-    t_fname = task_template_map[task.template_id]
-    fs.readFile t_fname, (err, template) ->
-      rendered = dormouse.render template.toString(), task
-      callback null, rendered
+      t_fname = task_template_map[task.template_id]
+      fs.readFile t_fname, (err, template) ->
+        rendered = dormouse.render template.toString(), task
+        callback null, rendered

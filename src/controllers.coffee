@@ -40,6 +40,9 @@ exports.configure = (server) ->
       dmconnect.fetch_render_task_for_id req.query['task_id'], null, (err, task) ->
         console.error err if err
         context['task'] = task
+        context['submit_url'] = "http://workersandbox.mturk.com/mturk/externalSubmit" # http://www.mturk.com
+        q_assignmentId = req.query['assignmentId']
+        context['assignmentId'] = if q_assignmentId and q_assignmentId != 'ASSIGNMENT_ID_NOT_AVAILABLE' then q_assignmentId else false
         res.render 'task.jade', context
     else
       res.render 'task.jade', context

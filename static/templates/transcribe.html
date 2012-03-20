@@ -17,14 +17,13 @@ response:
 <center>
   <img id="segment" src="{{ segment_url }}" width="100%"></img>
 </center>
-<form action="/transcribe" method="post" id="transcribe">
-  <p>
-    <label for="transcribe[content]" id="prompt">Please transcribe the {{ mode }}</label>
-  </p>
-  <textarea id="transcribe[content]" placeholder="Transcription" name="transcribe[content]" autofocus></textarea>
-  <input type="hidden" id="transcribe[task_id]" name="transcribe[task_id]" value="{{ id }}">
-  <input type="hidden" id="transcribe[segment_id]" name="transcribe[segment_id]" value="{{ segment_id }}">
-  <p>
-    <input type="submit" value="Transcribe">
-  </p>
-</form>
+
+<p>
+  <label for="transcribe[content]" id="prompt">Please transcribe the {{ mode }}</label>
+</p>
+<textarea id="transcribe[content]" placeholder="Transcription" name="transcribe[content]" autofocus></textarea>
+<input type="hidden" id="transcribe[task_id]" name="transcribe[task_id]" value="{{ id }}">
+<input type="hidden" id="transcribe[segment_id]" name="transcribe[segment_id]" value="{{ segment_id }}">
+<p>
+  <input type="submit" id="submit_button" value="Transcribe">
+</p>

@@ -43,7 +43,9 @@ html(lang="en")
             input(type="submit", value="Upload")
       div#main.column.grid_9
         if task
-          div#task.text !{task}
+          div#task.text
+            form(action="/transcribe", method="post", id="transcribe")
+              !{task}
         else
           div#nothing.text
             if user
