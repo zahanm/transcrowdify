@@ -27,8 +27,9 @@ exports.configure = (server) ->
       context['logout_url'] = dormouse.logout_url req.headers.host
       dmconnect.fetch_render_task req.session.access_token, (err, task) ->
         console.error err if err
-        context['task'] = task.html
-        context['submit'] = task.submit
+        if task
+          context['task'] = task.html
+          context['submit'] = task.submit
         res.render 'index.jade', context
     else
       context['login_url'] = dormouse.login_url req.headers.host
@@ -40,7 +41,7 @@ exports.configure = (server) ->
     if req.query['task_id']?
       dmconnect.fetch_render_task_for_id req.query['task_id'], null, (err, task) ->
         console.error err if err
-        context['task'] = task.html
+        context['task'] = task.html if task
         context['submit'] = "http://workersandbox.mturk.com/mturk/externalSubmit" # http://www.mturk.com
         q_assignmentId = req.query['assignmentId']
         context['assignmentId'] = if q_assignmentId and q_assignmentId != 'ASSIGNMENT_ID_NOT_AVAILABLE' then q_assignmentId else false
