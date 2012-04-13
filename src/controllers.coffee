@@ -125,6 +125,15 @@ exports.configure = (server) ->
     else
       res.render 'complete.jade', journal: false
 
+  server.get '/transcribed/:journal_id', (req, res) ->
+    journal_id = req.params['journal_id']
+    text_parts = []
+    Segment.find { journal_id: journal_id }, [], { sort: 'layout_order' }, (err, segments) ->
+      if segments
+        for s in segments
+          Array.prototype.push.apply( text_parts, s.transcription.split('\n') )
+      res.render 'transcribed.jade', { 'segments': text_parts }
+
   # dormouse authentication
   dormouse.setup_auth server
 
