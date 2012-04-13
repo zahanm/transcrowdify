@@ -1,0 +1,27 @@
+
+.box-shadow (@x: 0, @y: 0, @blur: 1px, @color: #000) {
+  box-shadow: @arguments;
+  -moz-box-shadow: @arguments;
+  -webkit-box-shadow: @arguments;
+}
+
+body {
+  background: #ccc;
+}
+
+#page {
+  // look like page
+  background: #fff;
+  min-height: 800px;
+  width: 800px;
+  // centering
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  // margins and padding
+  margin-top: 20px;
+  margin-bottom: 20px;
+  padding: 90px;
+  // shadows
+  .box-shadow(0, 0, 15px, #555);
+}
