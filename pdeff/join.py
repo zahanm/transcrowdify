@@ -118,7 +118,7 @@ def assemble_latex(fnames, transcriptions, types):
   return buf.getvalue()
 
 def join_pages(composites):
-  latex_buf = StringIO()
+  # latex_buf = StringIO()
   page_fnames = []
   for page_num, collection in enumerate(collect_pages(composites)):
     fnames, transcriptions, types = [], [], []
@@ -127,11 +127,11 @@ def join_pages(composites):
       transcriptions.append(r['transcription'])
       types.append(r['type'])
     page_fnames.append(paint_original_segments(fnames, transcriptions, page_num))
-    latex_buf.write(assemble_latex(fnames, transcriptions, types))
-    latex_buf.write(LATEX_NEWPAGE_SNIPPET)
-  raw_latex = LATEX_WRAP.format(raw_latex=latex_buf.getvalue(), font_size=LATEX_FONT_SIZE)
-  # transcribed pdf
-  latex_pdf_fname = latex_to_pdf(raw_latex)
+  #   latex_buf.write(assemble_latex(fnames, transcriptions, types))
+  #   latex_buf.write(LATEX_NEWPAGE_SNIPPET)
+  # raw_latex = LATEX_WRAP.format(raw_latex=latex_buf.getvalue(), font_size=LATEX_FONT_SIZE)
+  # # transcribed pdf
+  # latex_pdf_fname = latex_to_pdf(raw_latex)
   # ---
   # searchable pdf
   pdf_writer = PdfFileWriter()
@@ -145,7 +145,7 @@ def join_pages(composites):
   searchable_pdf.close()
   map(lambda f: f.close(), pdf_pages)
   json.dump({
-    'transcribed': latex_pdf_fname,
+    # 'transcribed': latex_pdf_fname,
     'searchable': searchable_pdf.name
   }, sys.stdout)
 

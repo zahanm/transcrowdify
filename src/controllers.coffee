@@ -165,7 +165,7 @@ finalize_journal = (j_id, cb) ->
     join journal, (out) ->
       if out.transcribed? and out.searchable?
         journal.completed = true
-        journal.transcribed = utils.fsPathToUrl out.transcribed
+        journal.transcribed = "/transcribed/#{j_id}"
         journal.searchable = utils.fsPathToUrl out.searchable
         journal.save (err) ->
           notify_finalized journal
