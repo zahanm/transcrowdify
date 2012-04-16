@@ -47,13 +47,16 @@ html(lang="en")
                     b.value(data-numdone="#{journal.numdone}")= journal.progress + "%"
               if journal.completed
                 p.status
-                  | Transcription complete<br/>
+                  | Transcription complete<br />
                   | You can view the pdfs at
                   | <a href="#{journal.searchable}">searchable</a>
                   | and
                   | <a href="#{journal.transcribed}">transcribed</a>
               else
-                p.status Transcription incomplete
+                p.status
+                  | Transcription incomplete<br />
+                  | You can view the partially
+                  | <a href="/transcribed/#{journal._id}">transcribed journal</a>
               ul.segments
                 for s in journal.segments
                   if s.completed
