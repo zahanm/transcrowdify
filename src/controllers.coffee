@@ -78,7 +78,7 @@ exports.configure = (server) ->
           create_transcribe_task segment
         # post answer to dormouse
         dormouse.answerTask task_id, { mode: category }, (err, r) ->
-          throw new Error('Error answering categorize dormouse task') if err
+          console.error('Error answering categorize dormouse task', err) if err
         res.redirect "/"
     else
       res.redirect '/'
@@ -92,7 +92,7 @@ exports.configure = (server) ->
         record_transcription segment_id, transcription
         # post answer to dormouse
         dormouse.answerTask task_id, { transcription: transcription }, (err, r) ->
-          throw new Error('Error answering transcribe dormouse task') if err
+          console.error('Error answering transcribe dormouse task', err) if err
         res.redirect "/"
     else
       res.redirect '/'
@@ -237,7 +237,7 @@ create_categorize_task = (segment) ->
       segment_url: segment.url
       segment_id: segment._id
   dormouse.createTask task_info, (err, r) ->
-    throw new Error('Error creating categorize dormouse task') if err
+    console.error('Error creating categorize dormouse task', err) if err
 
 create_transcribe_task = (segment) ->
   # -- create dormouse task for segment
@@ -255,7 +255,7 @@ create_transcribe_task = (segment) ->
       turk_reward: 0.02
       turk_url: "http://journal.dormou.se/task/"
   dormouse.createTask task_info, (err, r) ->
-    throw new Error('Error creating transcribe dormouse task') if err
+    console.error('Error creating transcribe dormouse task', err) if err
 
 join = (journal, cb) ->
   Segment.find { journal_id: journal._id }, [], { sort: 'layout_order' }, (err, segments) ->
@@ -288,4 +288,4 @@ json_spawn = (command, args, input, def, cb) ->
   true
 
 dbchecker = (err, doc) ->
-  throw new Error 'Error saving #{doc} to db' if err
+  console.error('Error saving to db', doc) if err
