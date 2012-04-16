@@ -19,7 +19,10 @@ response:
 </center>
 
 <p>
-  <label for="transcribe[content]" id="prompt">Please transcribe the {{ mode }}</label>
+  <label for="transcribe[content]" id="prompt">Please transcribe this segment of the journal</label>
+</p>
+<p>
+  <label for="transcribe[content]">You can use LaTeX for math equations, just surround it with <code>$$</code>s like so: <code>$$ \frac{1}{2} $$</code></label>
 </p>
 <textarea id="transcribe[content]" placeholder="Transcription" name="transcribe[content]" style="height: 12em; width: 50em;" autofocus></textarea>
 <input type="hidden" id="transcribe[task_id]" name="transcribe[task_id]" value="{{ id }}">
