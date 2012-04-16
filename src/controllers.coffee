@@ -119,7 +119,7 @@ exports.configure = (server) ->
 
   server.get '/complete', (req, res) ->
     if req.query['journal_id']?
-      Journal.findById p.query['journal_id'], (err, journal) ->
+      Journal.findById req.query['journal_id'], (err, journal) ->
         if journal.completed
           res.render 'complete.jade', journal: journal
         else
