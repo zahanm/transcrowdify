@@ -166,7 +166,7 @@ record_transcription = (s_id, t) ->
 finalize_journal = (j_id, cb) ->
   Journal.findById j_id, (err, journal) ->
     join journal, (out) ->
-      if out.transcribed? and out.searchable?
+      if out.searchable?
         journal.completed = true
         journal.transcribed = "/transcribed/#{j_id}"
         journal.searchable = utils.fsPathToUrl out.searchable
