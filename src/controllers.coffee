@@ -123,7 +123,7 @@ exports.configure = (server) ->
         if journal.completed
           res.render 'complete.jade', journal: journal
         else
-          finalize_journal journal_id, (j) ->
+          finalize_journal req.query['journal_id'], (j) ->
             res.render 'complete.jade', journal: j
     else
       res.render 'complete.jade', journal: false
