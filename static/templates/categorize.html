@@ -18,11 +18,11 @@ response:
 </center>
 
 <p>
-  <label for="categorize[content]" id="prompt">Does this segment contain math or text?</label>
+  <label for="categorize[content]" id="prompt">Does this segment contain any math equations?</label>
 </p>
 <select id="categorize[content]" name="categorize[content]" autofocus>
-  <option value="text" selected>Text</option>
-  <option value="math">Math</option>
+  <option value="text" selected>Only text</option>
+  <option value="math">Some math</option>
 </select>
 <input type="hidden" id="categorize[task_id]" name="categorize[task_id]" value="{{ id }}">
 <input type="hidden" id="categorize[segment_id]" name="categorize[segment_id]" value="{{ segment_id }}">

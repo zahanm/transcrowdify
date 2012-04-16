@@ -101,6 +101,9 @@ exports.configure = (server) ->
     # check mail
     email = require './email'
     email.check_mail()
+    # check mturk
+    # mturk = require './mturk'
+    # mturk.check_responses(req.session.access_token) if req.session.access_token
     # deal with rendering the page
     Segment.find (err, segments) ->
       Journal.find (err, journals) ->
@@ -252,7 +255,7 @@ create_transcribe_task = (segment) ->
       segment_id: segment._id
       turk_title: "Transcribe Text"
       turk_description: "Please transcribe the text you see in the image."
-      turk_reward: 0.02
+      turk_reward: 0.05
       turk_url: "http://journal.dormou.se/task/"
   dormouse.createTask task_info, (err, r) ->
     console.error('Error creating transcribe dormouse task', err) if err
