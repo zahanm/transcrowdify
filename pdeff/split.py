@@ -82,12 +82,12 @@ def optimal_dividers(im):
   hist = line_histogram(im)
   candidates = topk_pos(hist, DIVIDER_CANDIDATES)
   width, height = im.size
-  optimal = map(lambda i: (i+1) * (height / SEGMENTS_PER_PAGE), range(SEGMENTS_PER_PAGE)[:-1])
-  def closest_pos(l, item):
+  optimal = map(lambda i: i * (height / SEGMENTS_PER_PAGE), range(SEGMENTS_PER_PAGE)[1:])
+  def closest_pos(l, target):
     close = 0
-    dist = abs(l[close] - item)
+    dist = abs(l[close] - target)
     for pos, v in enumerate(l):
-      diff = abs(v - item)
+      diff = abs(v - target)
       if diff < dist:
         dist = diff
         close = pos
@@ -97,17 +97,18 @@ def optimal_dividers(im):
     # assumption that l is sorted
     item = l[i]
     lower, upper = i, i
-    while abs(item - l[lower]) <= min_height:
+    while lower >= 0 and abs(item - l[lower]) <= min_height:
       lower -= 1
     lower += 1
-    while abs(l[upper] - item) <= min_height:
+    while upper < len(l) and abs(l[upper] - item) <= min_height:
       upper += 1
     del l[lower:upper]
   min_height = height / ( SEGMENTS_PER_PAGE * 2 )
   for pos, d in enumerate(optimal):
-    p = closest_pos(candidates, d)
-    optimal[pos] = candidates[p]
-    rm_within_boundary(candidates, p, min_height)
+    if len(candidates) > 0:
+      p = closest_pos(candidates, d)
+      optimal[pos] = candidates[p]
+      rm_within_boundary(candidates, p, min_height)
   return optimal
 
 def divide_page(page_num, page_fname):
@@ -145,7 +146,7 @@ def split_image(image_fname):
     out.save(image_fname)
   im = Image.open(image_fname)
   width, height = im.size
-  if width != 571:
+  if width != 571 or height != 731:
     out = im.resize((571, 731))
     out.save(image_fname)
   # split it up

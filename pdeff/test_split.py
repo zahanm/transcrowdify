@@ -13,7 +13,7 @@ def draw_lines(im):
     draw.line((0, h, width, h), fill='red')
   target.save('./tmp/lined.png')
 
-FNAME = './tmp/aaa.png'
+FNAME = './tmp/aaa.jpg'
 
 if __name__ == '__main__':
   im = Image.open(FNAME)
